@@ -1,4 +1,5 @@
 import os.path as osp
+import os
 from PIL import Image
 import numpy as np
 import pandas as pd
@@ -14,15 +15,19 @@ ROOT_PATH = './Imagenet/'
 
 class ContinuousDataset(Dataset):
 
-    def __init__(self, setname):
-        csv_path = osp.join(ROOT_PATH, setname + '.csv')
-        lines = [x.strip() for x in open(csv_path, 'r').readlines()][1:]
-
-        data = []
-        label = []
-        lb = -1
-
-        self.wnids = []
+    def __init__(self, root, transform):
+        class_folders = os.listdir(root)
+        self.dataset = []
+        self.labels = []
+        self.label_map = dict()
+        for class_folder in class_folders:
+            current_label = 0
+            for img_file in os.listdir(class_folder):
+                self.dataset.append(osp.join(class_folder, img_file))
+                self.labels.append(current_label)
+            self.label_map[current_label] = class_folder
+            current_label += 1
+        self.transform = transform
 
         for l in lines:
             name, wnid = l.split(',')
