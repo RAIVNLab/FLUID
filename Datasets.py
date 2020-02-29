@@ -28,19 +28,6 @@ class ContinuousDataset(Dataset):
             self.label_map[current_label] = class_folder
             current_label += 1
         self.transform = transform
-
-        for l in lines:
-            name, wnid = l.split(',')
-            path = osp.join(ROOT_PATH, 'images', name)
-            if wnid not in self.wnids:
-                self.wnids.append(wnid)
-                lb += 1
-            data.append(path)
-            label.append(lb)
-
-        self.data = data
-        self.label = label
-
         self.transform = transforms.Compose([
             transforms.Resize(84),
             transforms.CenterCrop(84),
@@ -54,9 +41,9 @@ class ContinuousDataset(Dataset):
 
     def __getitem__(self, i):
         path, label = self.data[i], self.label[i]
-        if label not in
+        seen = label in self.known_classes
         image = self.transform(Image.open(path).convert('RGB'))
-        return image, label
+        return image, label, seen
 
     def known_classes(self):
         "Return all classes seen so far"
