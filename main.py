@@ -130,7 +130,7 @@ class OnlineMetricTracker():
     def track(self, pred, label, seen):
         correct = (torch.argmax(pred).item() == label).item()
         self.accuracy_log[self.counter] = correct
-        self.per_class_acc[label] = correct
+        self.per_class_acc[label] += correct
         if not seen:
             self.ood_correct += correct
         self.counter += 1
