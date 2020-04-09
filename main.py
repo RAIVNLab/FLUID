@@ -24,7 +24,7 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
 def ImagenetEval(model):
     parser = Options()
     args = parser.parse_args()
-    device = torch.cuda.device('cuda', args.gpu[0])
+    device = torch.device('cuda', args.gpu[0])
     model.to(device)
 
     #TODO: debug multi-gpu training
@@ -108,7 +108,7 @@ class Options():
 
     def parse_args(self):
         args = self.parser.parse_args()
-        args.gpu = args.gpu.split(' ')
+        args.gpu = [int(x) for x in args.gpu.split(' ')]
         return args
 
 class OnlineMetricTracker():
