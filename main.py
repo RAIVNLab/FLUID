@@ -45,7 +45,7 @@ def ImagenetEval(model):
     ])
 
     data_distribution = construct_distribution()
-    dataset = ContinuousDataset(root = '../../../1k/train', transform = test_tf, distribution = data_distribution)
+    dataset = ContinuousDataset(root = args.root, transform = test_tf, distribution = data_distribution)
     loader = torch.utils.data.DataLoader(dataset, batch_size = 1, shuffle = True, num_workers=0)
     training_dataset = OfflineDataset(dataset, training_tf)
     training_loader = torch.utils.data.DataLoader(training_dataset, batch_size=int(256/args.batch_factor),
