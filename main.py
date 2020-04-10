@@ -104,6 +104,7 @@ class Options():
         parser.add_argument('--epochs', type=int, default=2)
         parser.add_argument('--num_classes', type=int, default=1000)
         parser.add_argument('--batch_factor', type=int, default=2)
+        parser.add_argument('--experiment_name', type=str, default='Test')
         self.parser = parser
 
     def parse_args(self):
