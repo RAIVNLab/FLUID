@@ -55,7 +55,6 @@ def ImagenetEval(model):
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.m,
                                     weight_decay=1e-4,)
-    correct_log = np.zeros(len(dataset), dtype = bool)
     for i, (batch, label, seen) in enumerate(loader):
         batch = batch.cuda()
         prediction = model(batch)
@@ -63,7 +62,7 @@ def ImagenetEval(model):
 
         if i % args.training_interval == 0 and i > 0:
             print('Training after sample: {}'.format(i))
-            print('Current accuracy: {}'.format(np.sum(correct_log[i-1000:i])/1000))
+            print('Current accuracy: {}'.format(np.sum(tracker.accuracy_log)/i))
             train(model, training_dataset, training_loader, optimizer, args)
     tracker.write_metrics()
 
@@ -77,6 +76,7 @@ def train(model, training_dataset, training_loader, optimizer, args):
             label = label.cuda()
             pred = model(data)
             loss = F.cross_entropy(pred, label)/args.batch_factor
+            print(loss.item())
             loss.backward()
             if (j+1) % args.batch_factor == 0:
                 optimizer.step()
