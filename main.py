@@ -120,7 +120,7 @@ class OnlineMetricTracker():
         self.imgs_per_class = imgs_per_class
         self.experiment_name = experiment_name
         self.write_path = os.path.join(root, experiment_name)
-        self.counter
+        self.counter = 0
 
     def write_metrics(self):
         write_path = os.path.join(self.write_path, self.experiment_name)
