@@ -100,7 +100,7 @@ class Options():
         parser.add_argument('--lr', type=float, default=0.1)
         parser.add_argument('--m', type=float, default=0.1)
         parser.add_argument('--gpu', type=str, default='0')
-        parser.add_argument('--root', type=str, default='')
+        parser.add_argument('--root', type=str, default='/data/imagenet/1k/train')
         parser.add_argument('--epochs', type=int, default=2)
         parser.add_argument('--num_classes', type=int, default=1000)
         parser.add_argument('--batch_factor', type=int, default=2)
