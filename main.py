@@ -17,11 +17,12 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
 import torch.nn.functional as F
+from train import train
 
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
-def ImagenetEval(model):
+def sequential_eval(model, update):
     parser = Options()
     args = parser.parse_args()
     device = torch.device('cuda', args.gpu[0])
@@ -60,31 +61,11 @@ def ImagenetEval(model):
         prediction = model(batch)
         tracker.track(prediction, label, seen)
 
-        if i % args.training_interval == 0 and i > 0:
+        if (i+1) % args.training_interval == 0 :
             print('Training after sample: {}'.format(i))
             print('Current accuracy: {}'.format(np.sum(tracker.accuracy_log)/i))
-            train(model, training_dataset, training_loader, optimizer, args)
+            update(model, training_dataset, training_loader, optimizer, args)
     tracker.write_metrics()
-
-
-def train(model, training_dataset, training_loader, optimizer, args):
-    model = model.train()
-    training_dataset.update()
-    for i in range(args.epochs):
-        for j, (data, label) in enumerate(training_loader):
-            data = data.cuda()
-            label = label.cuda()
-            pred = model(data)
-            loss = F.cross_entropy(pred, label)/args.batch_factor
-            print(loss.item())
-            loss.backward()
-            if (j+1) % args.batch_factor == 0:
-                optimizer.step()
-                model.zero_grad()
-    model = model.eval()
-    return model
-
-
 
 def construct_distribution():
     n = 50
@@ -141,4 +122,4 @@ class OnlineMetricTracker():
 
 if __name__ == "__main__":
     model = models.resnet18()
-    ImagenetEval(model)
+    sequential_eval(model, train.train)
