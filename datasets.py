@@ -8,13 +8,10 @@ import random
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
-
-
-ROOT_PATH = './Imagenet/'
+from utils import file_to_class, create_imagenet_map
         
 
 class ContinuousDataset(Dataset):
-
     def __init__(self, root, transform, distribution = None):
         #Storing data and metadata
         self.dataset = []
@@ -86,3 +83,67 @@ class OfflineDataset(Dataset):
         
 
         
+class ContinuousDatasetRF(Dataset):
+
+    def __init__(self, root, transform, sequence_num):
+        #Storing data and metadata
+        self.seen_classes = set()
+        self.transform = transform
+        self.sequence = np.load(os.path.join(root, 'sequence' + str(sequence_num) + '.npy'))
+        path = 'class_map' + str(sequence_num) + '.npy'
+        class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
+        self.class_map = create_imagenet_map(root)
+        self.class_map.update(class_map_base)
+        self.imgs_per_class = np.load(os.path.join(root, 'class_count' + str(2) + '.npy'))
+        self.counter = -1
+        self.root = root
+
+    def __len__(self):
+        return len(self.sequence)
+
+    def __getitem__(self,i):
+        self.counter = i 
+        path = self.sequence[self.counter]
+        img_path = os.path.join(self.root, path)
+        label = file_to_class(img_path, self.class_map)
+        seen = label in self.seen_classes
+        if not seen:
+            self.seen_classes.add(label)
+        image = self.transform(Image.open(img_path).convert('RGB'))
+        return image, label, seen
+
+    #def imgs_per_class 
+    def get_samples_seen(self):
+        return self.counter
+
+class OfflineDatasetRF(Dataset):
+
+    def __init__(self, root, transform, sequence_num):
+        self.transform = transform
+        seq_path = os.path.join(root, 'sequence' + str(sequence_num) + '.npy')
+        self.sequence = np.load(seq_path)
+        path = 'class_map' + str(sequence_num) + '.npy'
+        class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
+        self.class_map = create_imagenet_map(root)
+        self.class_map.update(class_map_base)
+        self.counter = 0
+        self.root = root
+
+    def __len__(self):
+        #Trick pytorch to initialize empty dataset
+        if self.counter == 0:
+            return 1
+        else: 
+            return self.counter
+
+    def update(self, count):
+        self.counter = count
+    
+    def __getitem__(self, i):
+        path = self.sequence[i]
+        img_path = os.path.join(self.root, path)
+        label = file_to_class(img_path, self.class_map)
+        image = self.transform(Image.open(img_path).convert('RGB'))
+        return image, label
+
+    

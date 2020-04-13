@@ -16,19 +16,34 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
 import torch.nn.functional as F
+from abc import ABC, abstractmethod
 
+class Trainer(ABC):
+    @abstractmethod
+    def __init__(self, args):
+        pass
+    @abstractmethod
+    def update(self, args):
+        pass
+
+class BatchTrainer(Trainer):
+    pass
+
+class FineTuner(Trainer):
+    pass
+
+class InstanceInitialization(Trainer):
+    pass
 
 
 def train(model, training_dataset, training_loader, optimizer, args):
     model = model.train()
-    training_dataset.update()
     for i in range(args.epochs):
         for j, (data, label) in enumerate(training_loader):
             data = data.cuda()
             label = label.cuda()
             pred = model(data)
             loss = F.cross_entropy(pred, label)/args.batch_factor
-            print(loss.item())
             loss.backward()
             if (j+1) % args.batch_factor == 0:
                 optimizer.step()

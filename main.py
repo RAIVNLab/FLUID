@@ -4,7 +4,7 @@ import datasets
 import numpy as np
 import os
 import torch
-from datasets import ContinuousDataset, OfflineDataset
+from datasets import ContinuousDatasetRF, OfflineDatasetRF
 import torch.nn as nn
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
@@ -18,8 +18,9 @@ import torchvision.datasets as datasets
 import torchvision.models as models
 import torch.nn.functional as F
 from train import train
+import warnings
 
-
+warnings.filterwarnings("ignore", "(Possibly )?corrupt EXIF data", UserWarning)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
 def sequential_eval(model, update):
@@ -27,7 +28,6 @@ def sequential_eval(model, update):
     args = parser.parse_args()
     device = torch.device('cuda', args.gpu[0])
     model.to(device)
-
     #TODO: debug multi-gpu training
     # if len(args.gpu) > 1:
     #     model = nn.DataParallel(model)
@@ -38,41 +38,40 @@ def sequential_eval(model, update):
                 transforms.ToTensor(),
                 normalize,
             ])
-    training_tf = transforms.Compose([
+    train_tf = transforms.Compose([
         transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         normalize,
     ])
 
-    data_distribution = construct_distribution()
-    dataset = ContinuousDataset(root = args.root, transform = test_tf, distribution = data_distribution)
+    dataset = ContinuousDatasetRF(args.data_root, test_tf, args.sequence_num)
     loader = torch.utils.data.DataLoader(dataset, batch_size = 1, shuffle = True, num_workers=0)
-    training_dataset = OfflineDataset(dataset, training_tf)
-    training_loader = torch.utils.data.DataLoader(training_dataset, batch_size=int(256/args.batch_factor),
+    training_dataset = OfflineDatasetRF(args.data_root, train_tf, args.sequence_num)
+    training_loader = torch.utils.data.DataLoader(training_dataset, batch_size=int(args.offline_batch_size/args.batch_factor),
                                                   shuffle=True, num_workers=8, pin_memory=True)
-
-    tracker = OnlineMetricTracker(args.experiment_name, len(dataset), dataset.imgs_per_class, args.num_classes, args.root)
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    tracker = OnlineMetricTracker(args.experiment_name, dataset.imgs_per_class, args.num_classes, args.result_path)
+    optimizer = torch.optim.SGD(model.fc.parameters(), args.lr,
                                     momentum=args.m,
                                     weight_decay=1e-4,)
     for i, (batch, label, seen) in enumerate(loader):
-        batch = batch.cuda()
+        batch = batch.to(device)
         prediction = model(batch)
         tracker.track(prediction, label, seen)
 
         if (i+1) % args.training_interval == 0 :
             print('Training after sample: {}'.format(i))
             print('Current accuracy: {}'.format(np.sum(tracker.accuracy_log)/i))
-            update(model, training_dataset, training_loader, optimizer, args)
+            #training_dataset.update(dataset.get_samples_seen())
+            #update(model, training_dataset, training_loader, optimizer, args)
     tracker.write_metrics()
 
-def construct_distribution():
-    n = 50
-    x = np.arange(1 + n, 1001 + n)
-    distribution = (n / x)
-    np.random.shuffle(distribution)
-    return distribution
+# def construct_distribution():
+#     n = 50
+#     x = np.arange(1 + n, 1001 + n)
+#     distribution = (n / x)
+#     np.random.shuffle(distribution)
+#     return distribution
 
 class Options():
     def __init__(self):
@@ -81,10 +80,14 @@ class Options():
         parser.add_argument('--lr', type=float, default=0.1)
         parser.add_argument('--m', type=float, default=0.1)
         parser.add_argument('--gpu', type=str, default='0')
-        parser.add_argument('--root', type=str, default='/data/imagenet/1k/train')
+        parser.add_argument('--data_root', type=str, default='')
+        parser.add_argument('--result_path', type=str, default='results')
         parser.add_argument('--epochs', type=int, default=2)
         parser.add_argument('--num_classes', type=int, default=1000)
         parser.add_argument('--batch_factor', type=int, default=2)
+        parser.add_argument('--sequence_num', type=int, default=2)
+        parser.add_argument('--online_batch_size', type=int, default=1)
+        parser.add_argument('--offline_batch_size', type=int, default=256)
         parser.add_argument('--experiment_name', type=str, default='Test')
         self.parser = parser
 
@@ -94,32 +97,34 @@ class Options():
         return args
 
 class OnlineMetricTracker():
-    def __init__(self, experiment_name, data_length, imgs_per_class, num_classes = 1000, root = ''):
+    def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, root = ''):
         self.ood_correct = 0 #out of distribution accuracy
-        self.accuracy_log = correct_log = np.zeros(data_length, dtype = bool)
+        self.accuracy_log = []
         self.per_class_acc = np.zeros(num_classes)
         self.imgs_per_class = imgs_per_class
         self.experiment_name = experiment_name
         self.write_path = os.path.join(root, experiment_name)
+        self.num_classes = num_classes
         self.counter = 0
+        if not os.path.isdir(self.write_path):
+            os.mkdir(self.write_path)
 
     def write_metrics(self):
-        write_path = os.path.join(self.write_path, self.experiment_name)
-        np.save(os.path.join(write_path, 'ood_acc'), self.ood_correct/self.num_classes)
-        np.save(os.path.join(write_path, 'accuracy_log'), self.accuracy_log)
-        np.save(os.path.join(write_path, 'per_class_acc'), self.per_class_acc)
-        np.save(os.path.join(write_path, 'imgs_per_class'), self.imgs_per_class)
+        np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.num_classes)
+        np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
+        np.save(os.path.join(self.write_path, 'per_class_acc'), self.per_class_acc/self.imgs_per_class)
+        np.save(os.path.join(self.write_path, 'imgs_per_class'), self.imgs_per_class)
 
     def track(self, pred, label, seen):
-        correct = (torch.argmax(pred).item() == label).item()
-        self.accuracy_log[self.counter] = correct
+        correct = (torch.argmax(pred).item() == label)
+        self.accuracy_log.append(correct)
         self.per_class_acc[label] += correct
         if not seen:
             self.ood_correct += correct
         self.counter += 1
 
 
-
 if __name__ == "__main__":
-    model = models.resnet18()
-    sequential_eval(model, train.train)
+    model = models.resnet18(pretrained = True)
+    model.eval()
+    sequential_eval(model, train)
