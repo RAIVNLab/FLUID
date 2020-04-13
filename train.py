@@ -36,12 +36,12 @@ class InstanceInitialization(Trainer):
     pass
 
 
-def train(model, training_dataset, training_loader, optimizer, args):
+def train(model, training_dataset, training_loader, optimizer, device, args):
     model = model.train()
     for i in range(args.epochs):
         for j, (data, label) in enumerate(training_loader):
-            data = data.cuda()
-            label = label.cuda()
+            data = data.to(device)
+            label = label.to(device)
             pred = model(data)
             loss = F.cross_entropy(pred, label)/args.batch_factor
             loss.backward()

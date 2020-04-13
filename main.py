@@ -51,7 +51,7 @@ def sequential_eval(model, update):
     training_loader = torch.utils.data.DataLoader(training_dataset, batch_size=int(args.offline_batch_size/args.batch_factor),
                                                   shuffle=True, num_workers=8, pin_memory=True)
     tracker = OnlineMetricTracker(args.experiment_name, dataset.imgs_per_class, args.num_classes, args.result_path)
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    optimizer = torch.optim.SGD(model.fc.parameters(), args.lr,
                                     momentum=args.m,
                                     weight_decay=1e-4,)
     for i, (batch, label, seen) in enumerate(loader):
@@ -61,9 +61,9 @@ def sequential_eval(model, update):
 
         if (i+1) % args.training_interval == 0 :
             print('Training after sample: {}'.format(i))
-            print('Current accuracy: {}'.format(np.sum(tracker.accuracy_log)/i))
+            print('Current accuracy: {}'.format(np.sum(tracker.accuracy_log[i-1000:i])/1000))
             training_dataset.update(dataset.get_samples_seen())
-            update(model, training_dataset, training_loader, optimizer, args)
+            update(model, training_dataset, training_loader, optimizer, device, args)
     tracker.write_metrics()
     print(len(tracker.accuracy_log))
     print(tracker.counter)
