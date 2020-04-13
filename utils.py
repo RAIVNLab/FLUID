@@ -9,8 +9,8 @@ def file_to_class(file_name, imagenet_map):
     class_name = img_name.split('_')[0]
     return imagenet_map[class_name]
 
-def create_imagenet_map(root):
-    read_path = os.path.join(root,'imagenet_classes.txt')
+def create_imagenet_map():
+    read_path = 'imagenet_classes.txt'
     with open(read_path, 'r') as f:
         class_id_to_key = f.readlines()
 

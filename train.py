@@ -20,10 +20,10 @@ from abc import ABC, abstractmethod
 
 class Trainer(ABC):
     @abstractmethod
-    def __init__(self, args):
+    def __init__(self, args, model):
         pass
     @abstractmethod
-    def update(self, args):
+    def update(self, dataset, loader, args):
         pass
 
 class BatchTrainer(Trainer):
