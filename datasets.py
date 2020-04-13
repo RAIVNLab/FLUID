@@ -89,12 +89,15 @@ class ContinuousDatasetRF(Dataset):
         #Storing data and metadata
         self.seen_classes = set()
         self.transform = transform
-        self.sequence = np.load(os.path.join(root, 'sequence' + str(sequence_num) + '.npy'))
-        path = 'class_map' + str(sequence_num) + '.npy'
-        class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
-        self.class_map = create_imagenet_map(root)
+        tmp_path = 'S' + str(sequence_num) + '/sequence' + str(sequence_num) + '.npy'
+        self.sequence = np.load(os.path.join(root, tmp_path))
+
+        tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
+        class_map_base = np.load(os.path.join(root, tmp_path), allow_pickle = True).item()
+        self.class_map = create_imagenet_map()
         self.class_map.update(class_map_base)
-        self.imgs_per_class = np.load(os.path.join(root, 'class_count' + str(2) + '.npy'))
+        tmp_path = 'S' + str(sequence_num) + '/class_count' + str(sequence_num) + '.npy'
+        self.imgs_per_class = np.load(os.path.join(root, tmp_path))
         self.counter = -1
         self.root = root
 
@@ -102,7 +105,6 @@ class ContinuousDatasetRF(Dataset):
         return len(self.sequence)
 
     def __getitem__(self,i):
-        self.counter = i 
         path = self.sequence[self.counter]
         img_path = os.path.join(self.root, path)
         label = file_to_class(img_path, self.class_map)
@@ -110,6 +112,7 @@ class ContinuousDatasetRF(Dataset):
         if not seen:
             self.seen_classes.add(label)
         image = self.transform(Image.open(img_path).convert('RGB'))
+        self.counter += 1
         return image, label, seen
 
     #def imgs_per_class 
@@ -120,11 +123,11 @@ class OfflineDatasetRF(Dataset):
 
     def __init__(self, root, transform, sequence_num):
         self.transform = transform
-        seq_path = os.path.join(root, 'sequence' + str(sequence_num) + '.npy')
-        self.sequence = np.load(seq_path)
-        path = 'class_map' + str(sequence_num) + '.npy'
+        path = 'S' + str(sequence_num) + '/sequence' + str(sequence_num) + '.npy'
+        self.sequence = np.load(os.path.join(root, path))
+        path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
-        self.class_map = create_imagenet_map(root)
+        self.class_map = create_imagenet_map()
         self.class_map.update(class_map_base)
         self.counter = 0
         self.root = root
