@@ -1,5 +1,6 @@
 # GeneralizedPerception
-Data Folder Structure: The data for each sequence is in the respective folder labeled S(sequence number) <br />
+Data Folder Structure: <br />
+The data for each sequence is in the respective folder labeled S(sequence number) <br />
 SequenceN: folder containing all samples from 22k needed for sequence N <br />
 SequenceN.npy: The file containing the paths to each img in the order of the sequence <br />
 <br />
