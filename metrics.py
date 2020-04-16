@@ -14,7 +14,7 @@ class OnlineMetricTracker():
         self.counter = 0
         if not os.path.isdir(self.write_path):
             os.mkdir(self.write_path)
-
+            
     def write_metrics(self):
         np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.num_classes)
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)

@@ -15,7 +15,8 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
 import torch.nn.functional as F
-from train import train
+from train import train, NearestNeighbor
+from models import KNN
 import warnings
 from options import Options
 from metrics import OnlineMetricTracker
@@ -23,7 +24,7 @@ from metrics import OnlineMetricTracker
 warnings.filterwarnings("ignore", "(Possibly )?corrupt EXIF data", UserWarning)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
-def sequential_eval(model, update):
+def sequential_eval(model, trainer):
     parser = Options()
     args = parser.parse_args()
     device = torch.device('cuda', args.gpu[0])
@@ -51,9 +52,15 @@ def sequential_eval(model, update):
     training_loader = torch.utils.data.DataLoader(training_dataset, batch_size=int(args.offline_batch_size/args.batch_factor),
                                                   shuffle=True, num_workers=8, pin_memory=True)
     tracker = OnlineMetricTracker(args.experiment_name, dataset.imgs_per_class, args.num_classes, args.result_path)
-    optimizer = torch.optim.SGD(model.fc.parameters(), args.lr,
+    if args.finetune:
+        params = model.fc.parameters()
+    else:
+        params = model.paramters()
+    optimizer = torch.optim.SGD(params, args.lr,
                                     momentum=args.m,
                                     weight_decay=1e-4,)
+    #model = KNN(model, device, args)
+    #trainer = trainer(model, device, args, training_loader)
     for i, (batch, label, seen) in enumerate(loader):
         batch = batch.to(device)
         prediction = model(batch)
@@ -63,7 +70,9 @@ def sequential_eval(model, update):
             print('Training after sample: {}'.format(i))
             print('Current accuracy: {}'.format(np.sum(tracker.accuracy_log[i-1000:i])/1000))
             training_dataset.update(dataset.get_samples_seen())
-            update(model, training_dataset, training_loader, optimizer, device, args)
+            #trainer.update()
+            #update
+            trainer(model, training_dataset, training_loader, optimizer, device, args)
     tracker.write_metrics()
     print(len(tracker.accuracy_log))
     print(tracker.counter)
@@ -72,4 +81,6 @@ def sequential_eval(model, update):
 if __name__ == "__main__":
     model = models.resnet18(pretrained = True)
     model.eval()
+    #trainer = NearestNeighbor
+    #sequential_eval(model, NearestNeighbor)
     sequential_eval(model, train)

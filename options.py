@@ -17,6 +17,7 @@ class Options():
         parser.add_argument('--online_batch_size', type=int, default=1)
         parser.add_argument('--offline_batch_size', type=int, default=256)
         parser.add_argument('--experiment_name', type=str, default='Test')
+        parser.add_argument('--finetune', action = 'store_true')
         self.parser = parser
 
     def parse_args(self):
