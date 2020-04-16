@@ -55,7 +55,7 @@ def sequential_eval(model, trainer):
     if args.finetune:
         params = model.fc.parameters()
     else:
-        params = model.paramters()
+        params = model.parameters()
     optimizer = torch.optim.SGD(params, args.lr,
                                     momentum=args.m,
                                     weight_decay=1e-4,)
