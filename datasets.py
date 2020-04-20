@@ -94,7 +94,7 @@ class ContinuousDatasetRF(Dataset):
 
         tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         class_map_base = np.load(os.path.join(root, tmp_path), allow_pickle = True).item()
-        self.class_map = create_imagenet_map()
+        self.class_map = create_imagenet_map(root)
         self.class_map.update(class_map_base)
         tmp_path = 'S' + str(sequence_num) + '/class_count' + str(sequence_num) + '.npy'
         self.imgs_per_class = np.load(os.path.join(root, tmp_path))
@@ -119,6 +119,9 @@ class ContinuousDatasetRF(Dataset):
     def get_samples_seen(self):
         return self.counter
 
+    def set_counter(self, counter):
+        self.counter = counter
+
 class OfflineDatasetRF(Dataset):
 
     def __init__(self, root, transform, sequence_num):
@@ -127,7 +130,7 @@ class OfflineDatasetRF(Dataset):
         self.sequence = np.load(os.path.join(root, path))
         path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
-        self.class_map = create_imagenet_map()
+        self.class_map = create_imagenet_map(root)
         self.class_map.update(class_map_base)
         self.counter = 0
         self.root = root
@@ -148,5 +151,6 @@ class OfflineDatasetRF(Dataset):
         label = file_to_class(img_path, self.class_map)
         image = self.transform(Image.open(img_path).convert('RGB'))
         return image, label
+    
 
     
