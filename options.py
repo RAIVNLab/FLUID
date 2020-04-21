@@ -8,7 +8,6 @@ class Options():
         offline = self.update_opts.add_argument_group('update options')
         offline.add_argument('--lr', type=float, default=0.1)
         offline.add_argument('--m', type=float, default=0.1)
-        offline.add_argument('--finetune', action = 'store_true')
         offline.add_argument('--num_layers', type = int, default = 1, 
                             help = 'Number of layers to fine-tune')
         offline.add_argument('--epochs', type=int, default=2)
