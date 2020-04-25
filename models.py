@@ -67,7 +67,7 @@ def create_model(pretrained, architecture, classifier, new_classes_indices):
 
 def randomize_classifier(model, randomize_old=False, randomize_new=False, old_classes_indices=None,
                          new_classes_indices=None):
-    model_classifier = list(model.children)[-1]
+    model_classifier = list(model.children())[-1]
     random_classifier = nn.Linear(model_classifier.in_features, model_classifier.out_features,
                                   model_classifier.bias is not None)
 
