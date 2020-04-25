@@ -73,12 +73,12 @@ def randomize_classifier(model, randomize_old=False, randomize_new=False, old_cl
     if randomize_old:
         print("randomize old")
         # old_classes_indices = [0, 1, 2, 5] #TODO
-        model_classifier.weight[old_classes_indices, :] = torch.Tensor(random_classifier.weight[old_classes_indices, :])
+        model_classifier.weight.data[old_classes_indices, :] = random_classifier.weight.data[old_classes_indices, :]
 
     if randomize_new:
         # new_classes_indices = [3, 4, 5] #TODO
         print(len(new_classes_indices), " total new classes")
-        model_classifier.weight[new_classes_indices, :] = torch.Tensor(random_classifier.weight[new_classes_indices, :])
+        model_classifier.weight.data[new_classes_indices, :] = random_classifier.weight.data[new_classes_indices, :]
     return model
 
 
