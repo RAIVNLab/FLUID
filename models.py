@@ -12,15 +12,15 @@ class KNN(nn.Module):
         # modules=list(model.children())[:-1]
         # backbone=nn.Sequential(*modules)
         test_device = next(model.parameters()).device
-        test_val = torch.zeros(1, 3,224,224).to(test_device)
+        test_val = torch.zeros(1, 3, 224, 224).to(test_device)
         _, feature_dim = model(test_val).shape
         self.backbone = model
         self.centroids = torch.zeros([1000, feature_dim])
 
     def forward(self, x):
         batch_size, _, _, _ = x.shape
-        #features = self.backbone(x).squeeze().unsqueeze(0)
-        features = self.backbone(x).view(batch_size,-1)
+        # features = self.backbone(x).squeeze().unsqueeze(0)
+        features = self.backbone(x).view(batch_size, -1)
         logits = euclidean_metric(features, self.centroids)
         return logits
 
@@ -30,21 +30,22 @@ class KNN(nn.Module):
     def to(self, device):
         self.centroids = self.centroids.to(device)
         self.backbone = self.backbone.to(device)
-    
+
     def initialize_centroids(self, pretrain_classes):
         pass
 
+
 def create_model(pretrained, architecture, classifier, new_classes_indices):
     if architecture == 'resnet-18':
-        backbone = models.resnet18(pretrained = pretrained)
+        backbone = models.resnet18(pretrained=pretrained)
     elif architecture == 'resnet-34':
-        backbone = models.resnet34(pretrained = pretrained)
+        backbone = models.resnet34(pretrained=pretrained)
     elif architecture == 'resnet-50':
-        backbone = models.resnet50(pretrained = pretrained)
+        backbone = models.resnet50(pretrained=pretrained)
     elif architecture == 'mobilenetv2':
-        backbone = models.mobilenet_v2(pretrained = pretrained)
+        backbone = models.mobilenet_v2(pretrained=pretrained)
     elif architecture == 'densenet-161':
-        backbone = models.densenet161(pretrained = pretrained)
+        backbone = models.densenet161(pretrained=pretrained)
     else:
         sys.exit("Given model not in predefined set of models")
     if classifier == 'knn':
@@ -87,21 +88,20 @@ def extract_backbone(model):
     and so those are added back per specification."""
     model_name = str(type(model)).split('.')[-2]
     if model_name == 'resnet':
-        modules=list(model.children())[:-1]
+        modules = list(model.children())[:-1]
         modules.append(nn.Flatten())
-        backbone=nn.Sequential(*modules)
+        backbone = nn.Sequential(*modules)
     elif model_name == 'mobilenet':
-        modules=list(model.children())[:-1]
+        modules = list(model.children())[:-1]
         modules.append(nn.AdaptiveAvgPool2d(1))
         modules.append(nn.Flatten())
-        backbone=nn.Sequential(*modules)
+        backbone = nn.Sequential(*modules)
     elif model_name == 'densenet':
-        modules=list(model.children())[:-1]
+        modules = list(model.children())[:-1]
         modules.append(nn.ReLU())
         modules.append(nn.AdaptiveAvgPool2d(1))
         modules.append(nn.Flatten())
-        backbone=nn.Sequential(*modules)
-    else: 
+        backbone = nn.Sequential(*modules)
+    else:
         sys.exit("Model not currently implemented for nearest neighbors. See extract_backbone to implement.")
     return backbone
-    

@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     new_class_indices = list(offline_dataset.class_map_base.values())
     model = create_model(args.model_opts.pretrained, args.model_opts.backbone,
-                            args.model_opts.classifier)
+                            args.model_opts.classifier, new_class_indices)
     device = torch.device('cuda', args.sys_opts.gpu[0])
     model.to(device)
     trainer = create_trainer(model, device, offline_dataset, args.update_opts)
