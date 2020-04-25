@@ -41,14 +41,16 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
 if __name__ == "__main__":
     args = Options()
     args.parse_args()
-    model = create_model(args.model_opts.pretrained, args.model_opts.backbone, 
-                            args.model_opts.classifier)
-    device = torch.device('cuda', args.sys_opts.gpu[0])
-    model.to(device)
     train_tf = create_train_transform()
     test_tf = create_test_transform()
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
-    offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)                          
+    offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)
+
+    new_class_indices = list(offline_dataset.class_map_base.values())
+    model = create_model(args.model_opts.pretrained, args.model_opts.backbone,
+                            args.model_opts.classifier)
+    device = torch.device('cuda', args.sys_opts.gpu[0])
+    model.to(device)
     trainer = create_trainer(model, device, offline_dataset, args.update_opts)
     imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num) + '/' + 'imgs_per_class.npy'))
     tracker = OnlineMetricTracker(args.sys_opts.experiment_name, imgs_per_class, args.model_opts.num_classes, args.sys_opts.result_path)
