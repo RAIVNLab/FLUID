@@ -70,10 +70,10 @@ def randomize_classifier(model, randomize_old=False, randomize_new=False, old_cl
     model_classifier = list(model.children())[-1]
     random_classifier = nn.Linear(model_classifier.in_features, model_classifier.out_features,
                                   model_classifier.bias is not None)
-    print(model_classifier.weights.siz)
     if randomize_old:
+        print("randomize old")
         # old_classes_indices = [0, 1, 2, 5] #TODO
-        model_classifier.weights[old_classes_indices, :] = torch.Tensor(random_classifier[old_classes_indices, :])
+        model_classifier.weight[old_classes_indices, :] = torch.Tensor(random_classifier.weight[old_classes_indices, :])
 
     if randomize_new:
         # new_classes_indices = [3, 4, 5] #TODO
