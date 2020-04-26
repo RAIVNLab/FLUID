@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import torchvision.transforms as transforms
+import torch
 
 def create_sequence(parameter_list):
     pass
@@ -27,6 +28,13 @@ def euclidean_metric(a, b):
     logits = -((a - b)**2).sum(dim=2)
     return logits
 
+def cosine_sim(a,b):
+    eps = 1e-10
+    a_norm = a / (a.norm(dim=1)[:, None]+eps)
+    b_norm = b / (b.norm(dim=1)[:, None]+eps)
+    res = torch.mm(a_norm, b_norm.transpose(0, 1))
+    return res
+
 def extract_layers(model, num_layers, params):
     """Extract the paramaters for the last num_layers layers from a pytorch model. Parameters
     for each layer are stored as a list in params"""  
@@ -41,7 +49,7 @@ def extract_layers(model, num_layers, params):
         if len(list(child.children())) > 0:
             extract_layers(child, num_layers, params)
         i += 1
-    
+
 def remove_classifier(model):
     pass
 

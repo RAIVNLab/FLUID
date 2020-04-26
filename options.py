@@ -1,5 +1,6 @@
 
 import argparse
+import os
 
 class Options():
     def __init__(self):
@@ -30,6 +31,9 @@ class Options():
         model.add_argument('--num_classes', type=int, default=1000)
         model.add_argument('--pretrained', action = 'store_true', 
                             help ='Initialize model with pretraining')
+        model.add_argument('--similarity_measure', type = str, default = 'euclidean')
+        model.add_argument('--split_layers', type = int, default = 1)
+
 
         #system Options
         self.sys_opts = argparse.ArgumentParser()
@@ -42,10 +46,10 @@ class Options():
         sys.add_argument('--log_interval', type=int, default=5000)
 
         #Boiler Plate Code
-        online.add_argument('-f', type=str, help = "for debugging in jupyter")
-        model.add_argument('-f', type=str, help = "for debugging in jupyter")
-        offline.add_argument('-f', type=str, help = "for debugging in jupyter")
-        sys.add_argument('-f', type=str, help = "for debugging in jupyter")
+        # online.add_argument('-f', type=str, help = "for debugging in jupyter")
+        # model.add_argument('-f', type=str, help = "for debugging in jupyter")
+        # offline.add_argument('-f', type=str, help = "for debugging in jupyter")
+        # sys.add_argument('-f', type=str, help = "for debugging in jupyter")
 
 
     def parse_args(self):
@@ -54,3 +58,14 @@ class Options():
         self.model_opts = self.model_opts.parse_known_args()[0]
         self.sys_opts = self.sys_opts.parse_known_args()[0]
         self.sys_opts.gpu = [int(x) for x in self.sys_opts.gpu.split(' ')]
+    
+    def log_settings(self):
+        write_path = os.path.join(self.sys_opts.result_path, self.sys_opts.experiment_name)
+        f = open(os.path.join(write_path,"Settings.txt"), "w")
+        settings = str(self.sys_opts) + str(self.model_opts)+ str(self.online_opts) + str(self.update_opts)
+        strings = ['Namespace', '(', ')']
+        replacements = ['', '', ', ']
+        for string, replacement in zip(strings, replacements):
+            settings = settings.replace(string, replacement)
+        f.write(settings)
+        f.close()

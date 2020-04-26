@@ -18,6 +18,7 @@ import torchvision.models as models
 import torch.nn.functional as F
 from abc import ABC, abstractmethod
 from utils import extract_layers
+import sys
 
 class Trainer(ABC):
     @abstractmethod
@@ -69,37 +70,36 @@ class CentroidTrainer(Trainer):
         self.model.centroids = proto
         self.sample_counter = total_samples
 
-    # def update_model(self):
-    #     eps = 1e-8
-    #     proto = torch.zeros([1000, self.feature_dim]).to(self.device)
-    #     labels = torch.zeros(1000).to(self.device)
-    #     for j, (data, label) in enumerate(self.offline_loader):
-    #         data = data.to(self.device)
-    #         onehot = torch.zeros(label.size(0), 1000)
-    #         filled_onehot = onehot.scatter_(1, label.unsqueeze(dim=1), 1).to(self.device).detach()
-    #         embeddings = self.model.features(data).detach()
-    #         new_prototypes = torch.mm(filled_onehot.permute((1, 0)), embeddings) 
-    #         proto += new_prototypes
-    #         labels += filled_onehot.sum(dim = 0)
-    #         del new_prototypes
-    #         del filled_onehot
-    #     final_proto = proto/(labels.unsqueeze(1)+eps)
-    #     self.model.centroids = final_proto
-    
+class HybridTrainer(Trainer):
+    def __init__(self, model, device,  update_opts, offline_dataset):
+        super().__init__(model, device, update_opts, offline_dataset)
+        x, _ = next(iter(self.offline_loader))
+        x = x.to(device)
+        self.feature_dim = model.features(x).shape[-1]
+        model.backbone = model.backbone.eval()
+        self.sample_counter = 0
+        self.running_labels = torch.zeros(1000).to(self.device)
+        self.running_proto = torch.zeros([1000, self.feature_dim]).to(self.device)
 
-def train(model, training_dataset, training_loader, optimizer, device, args):
-    model = model.train()
-    for i in range(args.epochs):
-        for j, (data, label) in enumerate(training_loader):
-            data = data.to(device)
-            label = label.to(device)
-            pred = model(data)
-            loss = F.cross_entropy(pred, label)/args.batch_factor
-            loss.backward()
-            if (j+1) % args.batch_factor == 0:
-                optimizer.step()
-                model.zero_grad()
-    model = model.eval()
+    def update_model(self):
+        total_samples = self.offline_dataset.counter
+        num_samples = total_samples - self.sample_counter
+        eps = 1e-8
+        for i in range(self.sample_counter, total_samples):
+            data, label = self.offline_dataset.__getitem__(i)
+            data = data.to(self.device).unsqueeze(0)
+            label = torch.tensor([label])
+            onehot = torch.zeros(label.size(0), 1000)
+            filled_onehot = onehot.scatter_(1, label.unsqueeze(dim=1), 1).to(self.device).detach()
+            embeddings = self.model.features(data).detach().unsqueeze(0)
+            new_prototypes = torch.mm(filled_onehot.permute((1, 0)), embeddings) 
+            self.running_proto += new_prototypes
+            self.running_labels += filled_onehot.sum(dim = 0)
+            del new_prototypes
+            del filled_onehot
+        proto = self.running_proto/(self.running_labels.unsqueeze(1)+eps)
+        self.model.centroids = proto
+        self.sample_counter = total_samples
 
 class BatchTrainer(Trainer):
     def __init__(self, model, device, update_opts, offline_dataset):
@@ -144,6 +144,28 @@ class FineTune(Trainer):
                     self.model.zero_grad()
         self.model = self.model.eval()
 
+class SplitTrainer(Trainer):
+    def __init__(self, model, device, update_opts, offline_dataset):
+        super().__init__(model, device, update_opts, offline_dataset)
+        self.params = model.novel_classifier.parameters()
+        self.optimizer = torch.optim.SGD(self.params, self.update_opts.lr,
+                                    momentum=self.update_opts.m,
+                                    weight_decay=1e-4)
+
+    def update_model(self):
+        self.model.train()
+        for i in range(self.update_opts.epochs):
+            for j, (data, label) in enumerate(self.offline_loader):
+                data = data.to(self.device)
+                label = label.to(self.device)
+                pred = self.model(data)
+                loss = F.cross_entropy(pred, label)/self.update_opts.batch_factor
+                loss.backward()
+                if (j+1) % self.update_opts.batch_factor == 0:
+                    self.optimizer.step()
+                    self.model.zero_grad()
+        self.model = self.model.eval()
+
 class NoTrain(Trainer):
     def __init__(self, model, device, update_opts, offline_dataset):
         super().__init__(model, device, update_opts, offline_dataset)
@@ -155,12 +177,14 @@ class NoTrain(Trainer):
 def create_trainer(model, device, offline_dataset, update_opts):
     if update_opts.trainer == 'batch':
         trainer = BatchTrainer(model, device, update_opts, offline_dataset)
-    if update_opts.trainer == 'finetune':
+    elif update_opts.trainer == 'finetune':
         trainer = FineTune(model, device, update_opts, offline_dataset)
-    if update_opts.trainer == 'knn':
+    elif update_opts.trainer == 'knn':
         trainer = CentroidTrainer(model, device, update_opts, offline_dataset)
-    if update_opts.trainer == 'none':
+    elif update_opts.trainer == 'none':
         trainer = NoTrain(model, device, update_opts, offline_dataset)
+    else: 
+        sys.exit("Given Trainer not currently specified. Check your --trainer argument.")
     return trainer
 
 
