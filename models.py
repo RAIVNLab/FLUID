@@ -65,20 +65,22 @@ def create_model(pretrained, architecture, classifier, new_classes_indices):
 
 
 def append_new_classifier(model, new_classes_indices):
-    " This function creates 750 nodes for pre-train classes that
-    " have been removed from sequential classes.
-    " Assigns new classes
+    " This function creates 750 nodes for pre-train classes that"
+    " have been removed from sequential classes."
+    " Assigns new classes"
     model_classifier = list(model.children())[-1]
-    new_classifier = nn.Linear(model_classifier.in_features, 1750,
+    new_classifier = nn.Linear(model_classifier.in_features, 1000,
                                   model_classifier.bias is not None)
     random_classifier = nn.Linear(model_classifier.in_features, 1750,
                                   model_classifier.bias is not None)
     new_classifier.weight.data[0:1000, :] = model_classifier.weight.data[:, :]
     new_classifier.weight.data[new_classes_indices, :] = random_classifier.weight.data[new_classes_indices, :]
-    new_classifier.weight.data[1000:1750, :] = model_classifier.weight.data[new_classes_indices, :]
+#    new_classifier.weight.data[1000:1750, :] = model_classifier.weight.data[new_classes_indices, :]
 
     modules = list(model.children())[:-1]
-    modules.append(new_classifier)
+    print(modules)
+    print(model_classifier)
+    modules.append(model_classifier) # TODO: fix this
     return nn.Sequential(*modules)
 
 
