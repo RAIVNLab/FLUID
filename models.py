@@ -53,16 +53,33 @@ def create_model(pretrained, architecture, classifier, new_classes_indices):
         model = KNN(backbone)
     elif classifier == 'linear':
         model = backbone
-    elif classifier == 'linear_random_init_all_classes':
-        pass
-        # backbone = extract_backbone(backbone)
-        # model = backbone # TODO
+    elif classifier == 'linear_1750_classes':
+        model = backbone
+        model = append_new_classifier(model, new_classes_indices)
     elif classifier == 'linear_random_init_new_classes':
         model = backbone
         model = randomize_classifier(model, randomize_new=True, new_classes_indices=new_classes_indices)
     else:
         sys.exit("Given classifier not in predefined set of classifiers")
     return model
+
+
+def append_new_classifier(model, new_classes_indices):
+    " This function creates 750 nodes for pre-train classes that
+    " have been removed from sequential classes.
+    " Assigns new classes
+    model_classifier = list(model.children())[-1]
+    new_classifier = nn.Linear(model_classifier.in_features, 1750,
+                                  model_classifier.bias is not None)
+    random_classifier = nn.Linear(model_classifier.in_features, 1750,
+                                  model_classifier.bias is not None)
+    new_classifier.weight.data[0:1000, :] = model_classifier.weight.data[:, :]
+    new_classifier.weight.data[new_classes_indices, :] = random_classifier.weight.data[new_classes_indices, :]
+    new_classifier.weight.data[1000:1750, :] = model_classifier.weight.data[new_classes_indices, :]
+
+    modules = list(model.children())[:-1]
+    modules.append(new_classifier)
+    return nn.Sequential(*modules)
 
 
 def randomize_classifier(model, randomize_old=False, randomize_new=False, old_classes_indices=None,
