@@ -12,8 +12,6 @@ class OnlineMetricTracker():
         self.num_classes = num_classes
         self.counter = 0
         self.imgs_per_class = imgs_per_class
-        if not os.path.isdir(self.write_path):
-            os.mkdir(self.write_path)
             
     def write_metrics(self):
         np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.num_classes)
@@ -32,3 +30,6 @@ class OnlineMetricTracker():
         start = int(np.clip(current_sample-interval_length, 0, np.inf))
         true_length = current_sample - start
         return np.sum(self.accuracy_log[start:])/true_length
+    def create_experiment_folder(self):
+        if not os.path.isdir(self.write_path):
+            os.mkdir(self.write_path)

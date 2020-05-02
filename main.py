@@ -8,7 +8,7 @@ import torch.nn.parallel
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
-from utils import create_train_transform, create_test_transform, log_settings
+from utils import create_train_transform, create_test_transform, log_settings, create_novel_class_map
 from models import create_model
 from trainer import create_trainer
 import warnings
@@ -41,16 +41,18 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
 if __name__ == "__main__":
     args = Options()
     args.parse_args()
-    args.log_settings()
-    model = create_model(args.model_opts, args.sys_opts)
     device = torch.device('cuda', args.sys_opts.gpu[0])
+    model = create_model(args.model_opts, args.sys_opts, device)
     model.to(device)
+    class_map_novel = create_novel_class_map(args.sys_opts.root, args.sys_opts.sequence_num)
+
     train_tf = create_train_transform()
     test_tf = create_test_transform()
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
     offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)                          
-    trainer = create_trainer(model, device, offline_dataset, args.update_opts)
+    trainer = create_trainer(model, device, offline_dataset, args.update_opts, class_map_novel)
     imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num) + '/' + 'imgs_per_class.npy'))
     tracker = OnlineMetricTracker(args.sys_opts.experiment_name, imgs_per_class, args.model_opts.num_classes, args.sys_opts.result_path)
-    #log_settings(args, args.sys_opts.experiment_name, args.sys_opts.result_path)
+    tracker.create_experiment_folder()
+    args.log_settings()
     sequential_eval(model, trainer, online_dataset, tracker, args)

@@ -8,7 +8,7 @@ import random
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
-from utils import file_to_class, create_imagenet_map
+from utils import file_to_class, create_imagenet_map, create_novel_class_map
         
 
 class ContinuousDataset(Dataset):
@@ -93,7 +93,7 @@ class ContinuousDatasetRF(Dataset):
         self.sequence = np.load(os.path.join(root, tmp_path))
 
         tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
-        class_map_base = np.load(os.path.join(root, tmp_path), allow_pickle = True).item()
+        class_map_base = create_novel_class_map(root, sequence_num)
         self.class_map = create_imagenet_map(root)
         self.class_map.update(class_map_base)
         tmp_path = 'S' + str(sequence_num) + '/class_count' + str(sequence_num) + '.npy'
@@ -151,6 +151,39 @@ class OfflineDatasetRF(Dataset):
         label = file_to_class(img_path, self.class_map)
         image = self.transform(Image.open(img_path).convert('RGB'))
         return image, label
-    
 
+
+    
+class CategoriesSampler():
+
+    def __init__(self, n_batch, n_cls, n_per):
+        self.n_batch = n_batch
+        self.n_cls = n_cls
+        self.n_per = n_per
+
+    def __len__(self):
+        return self.n_batch
+    
+    def update(self, new_label):
+        self.m_ind = []
+        for i in range(max(new_label) + 1):
+            ind = np.argwhere(new_label == i).reshape(-1)
+            ind = torch.from_numpy(ind)
+            self.m_ind.append(ind)
+        
+    def __iter__(self):
+        for i_batch in range(self.n_batch):
+            batch = []
+            lens = np.array([len(x) for x in self.m_ind])
+            classes = np.array([x[0] for x in np.argwhere(lens > self.n_per)])
+            classes = classes[np.random.randint(len(classes), size = self.n_cls)]
+            #classes = torch.randperm(len(self.m_ind))[:self.n_cls]
+            for c in classes:
+                l = self.m_ind[c]
+                pos = torch.randperm(len(l))[:self.n_per]
+                batch.append (l[pos])
+
+
+            batch = torch.stack(batch).t().reshape(-1)
+            yield batch
     

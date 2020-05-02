@@ -36,34 +36,63 @@ class KNN(nn.Module):
 
 class SplitModel(nn.Module):
     #TODO generalize to multi-layer
-    def __init__(self, model, split_layers, sequence_num, root, num_classes):
+    def __init__(self, model, split_layers, sequence_num, root, num_classes, device):
+        super().__init__()
         self.num_classes = num_classes
         self.model = extract_backbone(model)
         test_device = next(self.model.parameters()).device
         test_val = torch.zeros(1, 3,224,224).to(test_device)
+        self.device = device
         _, feature_dim = self.model(test_val).shape
         path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
-        self.base_idx = torch.tensor([x for x in np.arange(0,1000) if x not in class_map_base.values()])
+        self.base_idx = torch.tensor([x for x in np.arange(0,num_classes) if x not in class_map_base.values()])
         self.novel_idx = torch.tensor(list(class_map_base.values()))
         self.params = []
         extract_layers(model, split_layers, self.params)
-        final_layer = self.params[-1]
         self.model = extract_backbone(model)
-        self.base_classifier = torch.nn.Parameter(final_layer[self.base_idx]) 
+        self.base_classifier = torch.nn.Linear(feature_dim, len(self.base_idx)).to(self.device)
+        self.base_classifier.weight = torch.nn.Parameter(self.params[0][self.base_idx])
+        self.base_classifier.bias = torch.nn.Parameter(self.params[1][self.base_idx])
         self.base_classifier.requires_grad = False
-        self.novel_classifier = torch.nn.Linear(feature_dim, 750)
+        self.novel_classifier = torch.nn.Linear(feature_dim, 750).to(self.device)
     
 
     def forward(self, x):
         batch_size, _, _, _ = x.shape
         features =  self.model(x).view(batch_size,-1)
-        output = torch.zeros(batch_size, self.num_classes)
-        output[self.novel_idx] = features @ self.base_classifier.T
-        output[self.base_idx] = self.novel_classifier(features)
+        output = torch.zeros(batch_size, self.num_classes).to(self.device)
+        output[:,self.base_idx] = self.base_classifier(features)
+        output[:,self.novel_idx] = self.novel_classifier(features)
         return output
 
-def create_model(model_opts, sys_opts):
+class Hybrid(nn.Module):
+    def __init__(self, model, sim_measure, full_model):
+        super().__init__()
+        self.sim_measure = sim_measure
+        test_device = next(model.parameters()).device
+        test_val = torch.zeros(1, 3,224,224).to(test_device)
+        _, feature_dim = model(test_val).shape
+        self.backbone = model
+        self.centroids = torch.nn.Parameter(torch.zeros([1000, feature_dim]))
+        #self.classifier = full_model.fc
+
+    def forward(self, x):
+        batch_size, _, _, _ = x.shape
+        #features = self.backbone(x).squeeze().unsqueeze(0)
+        features = self.backbone(x).view(batch_size,-1)
+        logits = self.sim_measure(features, self.centroids)
+        return logits
+
+    def features(self, x):
+        return self.backbone(x).squeeze()
+
+    def to(self, device):
+        self.centroids.data = self.centroids.data.to(device)
+        self.backbone = self.backbone.to(device)
+
+
+def create_model(model_opts, sys_opts, device):
     if model_opts.backbone == 'resnet-18':
         backbone = models.resnet18(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'resnet-34':
@@ -86,7 +115,16 @@ def create_model(model_opts, sys_opts):
     elif model_opts.classifier == 'linear':
         model = backbone
     elif model_opts.classifier == 'split':
-        model = SplitModel(model, model_opts.split_layers, sys_opts.sequence_num, sys_opts.root, model_opts.num_classes)
+        #TODO consider refactoring this to take the base classes as array rather than loading them from file
+        model = SplitModel(backbone, model_opts.split_layers, sys_opts.sequence_num, sys_opts.root, model_opts.num_classes, device)
+    elif model_opts.classifier == 'hybrid':
+        model = backbone
+        backbone = extract_backbone(backbone)
+        if model_opts.similarity_measure == 'euclidean':
+            measure =  euclidean_metric
+        elif model_opts.similarity_measure == 'cosine':
+            measure = cosine_sim
+        model = Hybrid(backbone, measure, model)
     else:
         sys.exit("Given classifier not in predefined set of classifiers")
     return model

@@ -20,6 +20,12 @@ def create_imagenet_map(root):
     key = dict(zip(class_id_to_key,np.arange(1000)))
     return key
 
+def create_novel_class_map(root, sequence_num):
+    tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
+    class_map_base = np.load(os.path.join(root, tmp_path), allow_pickle = True).item()
+
+    return class_map_base
+
 def euclidean_metric(a, b):
     n = a.shape[0]
     m = b.shape[0]
@@ -30,8 +36,8 @@ def euclidean_metric(a, b):
 
 def cosine_sim(a,b):
     eps = 1e-10
-    a_norm = a / (a.norm(dim=1)[:, None]+eps)
-    b_norm = b / (b.norm(dim=1)[:, None]+eps)
+    a_norm = a# / (a.norm(dim=1)[:, None]+eps)
+    b_norm = b#/ (b.norm(dim=1)[:, None]+eps)
     res = torch.mm(a_norm, b_norm.transpose(0, 1))
     return res
 
