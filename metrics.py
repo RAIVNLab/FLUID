@@ -26,8 +26,9 @@ class OnlineMetricTracker():
         self.accuracy_log.append(correct)
         self.per_class_acc[label] += correct
         print(pred.size())
-        print(correct, " ", torch.argmax(pred).item(), " ", label, " ", pred[0, torch.argmax(pred).item()],
-              torch.sum(pred * pred))
+        prob = torch.nn.functional.softmax(pred[0], dim=0)
+        print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[0, torch.argmax(pred).item()],
+              torch.sum(prob * prob))
         if not seen:
             print(" this was not seen ")
             self.ood_correct += correct
