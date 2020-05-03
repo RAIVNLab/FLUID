@@ -23,7 +23,6 @@ class OnlineMetricTracker():
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
         np.save(os.path.join(self.write_path, 'ood_threshold_log'), self.ood_threshold_log)
         np.save(os.path.join(self.write_path, 'ind_threshold_log'), self.ind_threshold_log)
-
         np.save(os.path.join(self.write_path, 'per_class_acc'), self.per_class_acc/self.imgs_per_class)
 
     def track(self, pred, label, seen):
@@ -31,15 +30,15 @@ class OnlineMetricTracker():
         self.accuracy_log.append(correct)
         self.per_class_acc[label] += correct
         # print(pred.size())
-        prob = torch.nn.functional.softmax(pred[0], dim=0)
+        # prob = torch.nn.functional.softmax(pred[0], dim=0)
         # print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[torch.argmax(pred).item()],
         #       torch.sum(prob * prob), " seen  = ", seen)
         if not seen:
             self.ood_correct += correct
             self.total_ood += 1
-            self.ood_threshold_log.append(prob[torch.argmax(pred).item()])
+            # self.ood_threshold_log.append(prob[torch.argmax(pred).item()])
         else:
-            self.ind_threshold_log.append(prob[torch.argmax(pred).item()])
+            pass # self.ind_threshold_log.append(prob[torch.argmax(pred).item()])
 
         self.counter += 1
     
