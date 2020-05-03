@@ -16,7 +16,7 @@ class OnlineMetricTracker():
         self.imgs_per_class = imgs_per_class
             
     def write_metrics(self):
-        np.save(os.path.join(self.write_path, 'ood_acc'), (self.ood_correct+0.0)/self.num_classes)
+        np.save(os.path.join(self.write_path, 'ood_acc'), (self.ood_correct+0.0))#/self.num_classes)
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
         np.save(os.path.join(self.write_path, 'per_class_acc'), self.per_class_acc/self.imgs_per_class)
 
