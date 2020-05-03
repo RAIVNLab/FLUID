@@ -95,7 +95,7 @@ class ContinuousDatasetRF(Dataset):
         tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         novel_classes = create_novel_class_map(root, sequence_num)
         self.seen_classes.update(range(1000))
-        self.seen_classes.remove(novel_classes.values())
+        self.seen_classes -= set(novel_classes.values())
         class_map_base = novel_classes
         imagenet_classes = create_imagenet_map(root)
         self.class_map = imagenet_classes
