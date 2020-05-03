@@ -25,7 +25,9 @@ class OnlineMetricTracker():
         self.accuracy_log.append(correct)
         self.per_class_acc[label] += correct
         if not seen:
+            print(correct)
             self.ood_correct += correct
+            print(self.ood_correct)
             self.total_ood += 1
         self.counter += 1
     
