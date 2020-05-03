@@ -36,7 +36,6 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
             print('Training after sample: {}'.format(j))
             print('Current accuracy: {}'.format(acc))
             tracker.write_metrics()
-            break
     tracker.write_metrics()
 
 
