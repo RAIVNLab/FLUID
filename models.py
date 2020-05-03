@@ -69,19 +69,24 @@ def append_new_classifier(model, new_classes_indices):
     " have been removed from sequential classes."
     " Assigns new classes"
     model_classifier = list(model.children())[-1]
-    new_classifier = nn.Linear(model_classifier.in_features, 1000,
+    new_classifier = nn.Linear(model_classifier.in_features, 1750,
                                   model_classifier.bias is not None)
     random_classifier = nn.Linear(model_classifier.in_features, 1750,
                                   model_classifier.bias is not None)
     new_classifier.weight.data[0:1000, :] = model_classifier.weight.data[:, :]
     new_classifier.weight.data[new_classes_indices, :] = random_classifier.weight.data[new_classes_indices, :]
-#    new_classifier.weight.data[1000:1750, :] = model_classifier.weight.data[new_classes_indices, :]
+    new_classifier.weight.data[1000:1750, :] = model_classifier.weight.data[new_classes_indices, :]
 
     modules = list(model.children())[:-1]
-    print(modules)
-    print(model_classifier)
+    print("model: ", model)
+    print("-------------------------------------------.")
+    # print(modules)
+    # print(model_classifier)
     modules.append(model_classifier) # TODO: fix this
-    return nn.Sequential(*modules)
+    # model = nn.Sequential(*modules)
+    model.fc = new_classifier
+    print(model)
+    return model
 
 
 def randomize_classifier(model, randomize_old=False, randomize_new=False, old_classes_indices=None,
