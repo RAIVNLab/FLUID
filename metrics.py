@@ -5,6 +5,7 @@ import torch
 class OnlineMetricTracker():
     def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = ''):
         self.ood_correct = 0 #out of distribution accuracy
+        self.total_ood = 0
         self.accuracy_log = []
         self.per_class_acc = np.zeros(num_classes)
         self.per_class_samples = np.zeros(num_classes)
@@ -15,7 +16,7 @@ class OnlineMetricTracker():
         self.imgs_per_class = imgs_per_class
             
     def write_metrics(self):
-        np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.num_classes)
+        np.save(os.path.join(self.write_path, 'ood_acc'), (self.ood_correct+0.0)/self.num_classes)
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
         np.save(os.path.join(self.write_path, 'per_class_acc'), self.per_class_acc/self.imgs_per_class)
 
