@@ -43,7 +43,7 @@ class Options():
         sys.add_argument('--result_path', type=str, default='results')
         sys.add_argument('--sequence_num', type=int, default=2)
         sys.add_argument('--experiment_name', type=str, default='Test')
-        sys.add_argument('--log_interval', type=int, default=5000)
+        sys.add_argument('--log_interval', type=int, default=100)
 
         #Boiler Plate Code
         # online.add_argument('-f', type=str, help = "for debugging in jupyter")
