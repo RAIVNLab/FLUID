@@ -93,8 +93,12 @@ class ContinuousDatasetRF(Dataset):
         self.sequence = np.load(os.path.join(root, tmp_path))
 
         tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
-        class_map_base = create_novel_class_map(root, sequence_num)
-        self.class_map = create_imagenet_map(root)
+        novel_classes = create_novel_class_map(root, sequence_num)
+        self.seen_classes.update(range(1000))
+        self.seen_classes.remove(novel_classes)
+        class_map_base = novel_classes
+        imagenet_classes = create_imagenet_map(root)
+        self.class_map = imagenet_classes
         self.class_map.update(class_map_base)
         tmp_path = 'S' + str(sequence_num) + '/class_count' + str(sequence_num) + '.npy'
         self.imgs_per_class = np.load(os.path.join(root, tmp_path))
