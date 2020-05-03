@@ -29,7 +29,7 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
         if (i+1) % args.online_opts.training_interval == 0:
             trainer.update_dataset(online_dataset.get_samples_seen())
             trainer.update_model()
-        if (i+1) % args.sys_opts.log_interval == 0:    
+        if (i+1) % args.sys_opts.log_interval == 0:
             j = online_dataset.get_samples_seen()
             acc = tracker.current_accuracy(args.sys_opts.log_interval, j)
             print('Training after sample: {}'.format(j))
