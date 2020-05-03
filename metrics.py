@@ -7,6 +7,7 @@ class OnlineMetricTracker():
         self.ood_correct = 0 #out of distribution accuracy
         self.accuracy_log = []
         self.per_class_acc = np.zeros(num_classes)
+        self.per_class_samples = np.zeros(num_classes)
         self.experiment_name = experiment_name
         self.write_path = os.path.join(result_path, experiment_name)
         self.num_classes = num_classes
@@ -24,6 +25,7 @@ class OnlineMetricTracker():
         self.per_class_acc[label] += correct
         if not seen:
             self.ood_correct += correct
+            self.total_ood += 1
         self.counter += 1
     
     def current_accuracy(self, interval_length, current_sample):
