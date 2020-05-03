@@ -28,11 +28,9 @@ class OnlineMetricTracker():
         print(pred.size())
         prob = torch.nn.functional.softmax(pred[0], dim=0)
         print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[torch.argmax(pred).item()],
-              torch.sum(prob * prob))
+              torch.sum(prob * prob), " seen  = ", seen)
         if not seen:
-            print(" this was not seen ")
             self.ood_correct += correct
-            print(self.ood_correct)
             self.total_ood += 1
 
         self.counter += 1
