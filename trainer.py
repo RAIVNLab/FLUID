@@ -65,7 +65,7 @@ class CentroidTrainer(Trainer):
             new_prototypes = torch.mm(filled_onehot.permute((1, 0)), embeddings) 
             self.running_proto += new_prototypes
             self.running_labels += filled_onehot.sum(dim = 0)
-            del new_prototypesn
+            del new_prototypes
             del filled_onehot
         proto = self.running_proto/(self.running_labels.unsqueeze(1)+eps)
         self.model.centroids = proto
