@@ -65,7 +65,7 @@ class CentroidTrainer(Trainer):
             new_prototypes = torch.mm(filled_onehot.permute((1, 0)), embeddings) 
             self.running_proto += new_prototypes
             self.running_labels += filled_onehot.sum(dim = 0)
-            del new_prototypesn
+            del new_prototypes
             del filled_onehot
         proto = self.running_proto/(self.running_labels.unsqueeze(1)+eps)
         self.model.centroids = proto
@@ -88,7 +88,7 @@ class HybridTrainer(Trainer):
         #self.model.base = torch.nn.Parameter(centroids.to(device))
 
         self.num_layers = update_opts.num_layers
-        extract_layers(self.model, 1, self.params)
+        extract_layers(self.model, 3, self.params)
         # self.optimizer = torch.optim.SGD([self.model.centroids]+self.params, self.update_opts.lr,
         #                             momentum=self.update_opts.m,
         #                             weight_decay=1e-4)
@@ -97,7 +97,7 @@ class HybridTrainer(Trainer):
         self.counter = 0
 
     def update_model(self):
-        n = 10000
+        n = 5000
         z = 5000
         if self.offline_dataset.counter+1 <= n:
             self.initialize_centroids()
@@ -106,12 +106,12 @@ class HybridTrainer(Trainer):
             del self.running_labels
             del self.running_proto
             torch.cuda.empty_cache()
-            self.optimizer = torch.optim.SGD([self.model.centroids], self.update_opts.lr,
+            self.optimizer = torch.optim.SGD([self.model.centroids]+self.params, self.update_opts.lr,
                                     momentum=self.update_opts.m,
                                     weight_decay=1e-4)  
             #self.scheduler = torch.optim.lr_scheduler.CyclicLR(
         #print(self.offline_dataset.counter > (n+z) and (self.offline_dataset.counter+1) % 5000 == 0)
-        if self.offline_dataset.counter >= (n) and (self.offline_dataset.counter+1) % 10000 == 0:
+        if self.offline_dataset.counter >= (n) and (self.offline_dataset.counter+1) % 5000 == 0:
             print('training')
             self.train()
 

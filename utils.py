@@ -36,8 +36,8 @@ def euclidean_metric(a, b):
 
 def cosine_sim(a,b):
     eps = 1e-10
-    a_norm = a# / (a.norm(dim=1)[:, None]+eps)
-    b_norm = b#/ (b.norm(dim=1)[:, None]+eps)
+    a_norm = a / (a.norm(dim=1)[:, None]+eps)
+    b_norm = b/ (b.norm(dim=1)[:, None]+eps)
     res = torch.mm(a_norm, b_norm.transpose(0, 1))
     return res
 
@@ -86,3 +86,5 @@ def log_settings(args, experiment_name, result_path):
     f = open(os.path.join(write_path,"Settings.txt"), "w")
     f.write(str(args))
     f.close()
+
+
