@@ -39,7 +39,7 @@ class OnlineMetricTracker():
             self.total_ood += 1
             self.ood_threshold_log.append(float(prob[torch.argmax(pred).item()].detach()))
         else:
-            pass # self.ind_threshold_log.append(prob[torch.argmax(pred).item()])
+            self.ind_threshold_log.append(float(prob[torch.argmax(pred).item()].detach()))
 
         self.counter += 1
     
