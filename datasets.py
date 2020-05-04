@@ -86,7 +86,7 @@ class OfflineDataset(Dataset):
 class ContinuousDatasetRF(Dataset):
 
     def __init__(self, root, transform, sequence_num):
-        #Storing data and metadata
+        # Storing data and metadata
         self.seen_classes = set()
         self.transform = transform
         tmp_path = 'S' + str(sequence_num) + '/sequence' + str(sequence_num) + '.npy'
@@ -96,6 +96,7 @@ class ContinuousDatasetRF(Dataset):
         novel_classes = create_novel_class_map(root, sequence_num)
         self.seen_classes.update(range(1000))
         self.seen_classes -= set(novel_classes.values())
+        self.pre_train_classes = self.seen_classes.copy()
         class_map_base = novel_classes
         imagenet_classes = create_imagenet_map(root)
         self.class_map = imagenet_classes
@@ -114,7 +115,8 @@ class ContinuousDatasetRF(Dataset):
         label = file_to_class(img_path, self.class_map)
         seen = label in self.seen_classes
         if not seen:
-            self.seen_classes.add(label)
+            # self.seen_classes.add(label)
+            pass
         image = self.transform(Image.open(img_path).convert('RGB'))
         self.counter += 1
         return image, label, seen
