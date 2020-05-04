@@ -33,10 +33,10 @@ class OnlineMetricTracker():
         # print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[torch.argmax(pred).item()],
         #       torch.sum(prob * prob), " seen  = ", seen)
         if not seen:
-            prob = torch.nn.functional.softmax(pred[0], dim=0)
+            # prob = torch.nn.functional.softmax(pred[0], dim=0)
             self.ood_correct += correct
             self.total_ood += 1
-            self.ood_threshold_log.append(prob[torch.argmax(pred).item()])
+            self.ood_threshold_log.append(torch.argmax(pred).item())
         else:
             pass # self.ind_threshold_log.append(prob[torch.argmax(pred).item()])
 
