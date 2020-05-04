@@ -6,6 +6,7 @@ from utils import euclidean_metric, cosine_sim
 import numpy as np
 import os
 from utils import extract_layers
+from convnet import Convnet
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
@@ -103,6 +104,8 @@ def create_model(model_opts, sys_opts, device):
         backbone = models.mobilenet_v2(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'densenet-161':
         backbone = models.densenet161(pretrained = model_opts.pretrained)
+    elif model_opts.backbone == 'convnet':
+        backbone = Convnet()
     else:
         sys.exit("Given model not in predefined set of models")
     if model_opts.classifier == 'knn':
@@ -125,6 +128,11 @@ def create_model(model_opts, sys_opts, device):
         elif model_opts.similarity_measure == 'cosine':
             measure = cosine_sim
         model = Hybrid(backbone, measure, model)
+    elif model_opts.classifier == 'ptn':
+        measure = euclidean_metric
+        backbone = extract_backbone(backbone)
+        model = KNN(backbone, measure)
+        model.load_state_dict(torch.load(os.path.join(sys_opts.root, sys_opts.load_path)))
     else:
         sys.exit("Given classifier not in predefined set of classifiers")
     return model
@@ -149,6 +157,8 @@ def extract_backbone(model):
         modules.append(nn.AdaptiveAvgPool2d(1))
         modules.append(nn.Flatten())
         backbone=nn.Sequential(*modules)
+    elif str(model) == 'Convnet':
+        backbone = model
     else: 
         sys.exit("Model not currently implemented for nearest neighbors. See extract_backbone to implement.")
     return backbone
