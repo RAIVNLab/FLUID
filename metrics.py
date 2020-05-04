@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import torch
+import torch.nn.functional as F
 
 class OnlineMetricTracker():
     def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = ''):
@@ -32,11 +33,11 @@ class OnlineMetricTracker():
         # print(pred.size())
         # print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[torch.argmax(pred).item()],
         #       torch.sum(prob * prob), " seen  = ", seen)
+        prob = F.softmax(pred[0], dim=0)
         if not seen:
-            # prob = torch.nn.functional.softmax(pred[0], dim=0)
             self.ood_correct += correct
             self.total_ood += 1
-            self.ood_threshold_log.append(torch.argmax(pred).item())
+            self.ood_threshold_log.append(prob[torch.argmax(pred).item()].detach())
         else:
             pass # self.ind_threshold_log.append(prob[torch.argmax(pred).item()])
 
