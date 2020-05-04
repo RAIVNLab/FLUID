@@ -37,7 +37,7 @@ class OnlineMetricTracker():
         if not seen:
             self.ood_correct += correct
             self.total_ood += 1
-            self.ood_threshold_log.append(prob[torch.argmax(pred).item()].detach())
+            self.ood_threshold_log.append(float(prob[torch.argmax(pred).item()].detach()))
         else:
             pass # self.ind_threshold_log.append(prob[torch.argmax(pred).item()])
 
