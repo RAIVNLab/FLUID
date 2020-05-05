@@ -3,6 +3,7 @@ import os
 import torch
 import torch.nn.functional as F
 
+
 class OnlineMetricTracker():
     def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = '', ood_method="max_logit"):
         self.ood_correct = 0 #out of distribution accuracy
