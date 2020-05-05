@@ -38,7 +38,7 @@ class OnlineMetricTracker():
             prob = F.softmax(pred[0], dim=0)
             threshold = float(prob[torch.argmax(pred).item()].detach())
         elif self.ood_method == "max_logit":
-            print("min = ", torch.in(pred), " max = ", torch.max(pred))
+            print("min = ", torch.min(pred), " max = ", torch.max(pred))
             threshold = float(torch.max(pred).detach())
 
         if not seen:
