@@ -95,6 +95,9 @@ class Hybrid(nn.Module):
 def create_model(model_opts, sys_opts, device):
     if model_opts.backbone == 'resnet-18':
         backbone = models.resnet18(pretrained = model_opts.pretrained)
+        if model_opts.path_to_model is not None:
+            pretrained_model_dict = torch.load(model_opts.path_to_model)
+            backbone.load_state_dict(pretrained_model_dict)
     elif model_opts.backbone == 'resnet-34':
         backbone = models.resnet34(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'resnet-50':

@@ -14,6 +14,7 @@ from trainer import create_trainer
 import warnings
 from options import Options
 from metrics import OnlineMetricTracker
+from utils import extract_layers
 
 warnings.filterwarnings("ignore", "(Possibly )?corrupt EXIF data", UserWarning)
 
