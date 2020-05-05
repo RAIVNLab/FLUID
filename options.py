@@ -68,7 +68,7 @@ class Options():
         write_path = os.path.join(self.sys_opts.result_path, self.sys_opts.experiment_name)
         f = open(os.path.join(write_path, "Settings.txt"), "w")
         settings = str(self.sys_opts) + str(self.model_opts) + str(self.online_opts) + str(self.update_opts) \
-                   + str(ood_opts)
+                   + str(self.ood_opts)
         strings = ['Namespace', '(', ')']
         replacements = ['', '', ', ']
         for string, replacement in zip(strings, replacements):
