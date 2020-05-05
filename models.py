@@ -111,7 +111,7 @@ def create_model(model_opts, sys_opts, device):
     if model_opts.classifier == 'knn':
         backbone = extract_backbone(backbone)
         if model_opts.similarity_measure == 'euclidean':
-            measure =  euclidean_metric
+            measure = euclidean_metric
         elif model_opts.similarity_measure == 'cosine':
             measure = cosine_sim
         model = KNN(backbone, measure)
@@ -124,7 +124,7 @@ def create_model(model_opts, sys_opts, device):
         model = backbone
         backbone = extract_backbone(backbone)
         if model_opts.similarity_measure == 'euclidean':
-            measure =  euclidean_metric
+            measure = euclidean_metric
         elif model_opts.similarity_measure == 'cosine':
             measure = cosine_sim
         model = Hybrid(backbone, measure, model)
