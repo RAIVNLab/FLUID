@@ -62,7 +62,7 @@ class Options():
         self.model_opts = self.model_opts.parse_known_args()[0]
         self.sys_opts = self.sys_opts.parse_known_args()[0]
         self.sys_opts.gpu = [int(x) for x in self.sys_opts.gpu.split(' ')]
-        self.ood_opts = self.ood_opts.parse_know_args()[0]
+        self.ood_opts = self.ood_opts.parse_known_args()[0]
 
     def log_settings(self):
         write_path = os.path.join(self.sys_opts.result_path, self.sys_opts.experiment_name)
