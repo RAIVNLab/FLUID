@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 class OnlineMetricTracker():
-    def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = ''):
+    def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = '', ood_method="max_logit"):
         self.ood_correct = 0 #out of distribution accuracy
         self.total_ood = 0
         self.accuracy_log = []
@@ -20,7 +20,7 @@ class OnlineMetricTracker():
             
     def write_metrics(self):
         print(self.ood_correct, " ", self.total_ood)
-        np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.num_classes)
+        np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.total_ood)
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
         np.save(os.path.join(self.write_path, 'ood_threshold_log'), self.ood_threshold_log)
         np.save(os.path.join(self.write_path, 'ind_threshold_log'), self.ind_threshold_log)
@@ -33,13 +33,19 @@ class OnlineMetricTracker():
         # print(pred.size())
         # print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[torch.argmax(pred).item()],
         #       torch.sum(prob * prob), " seen  = ", seen)
-        prob = F.softmax(pred[0], dim=0)
+
+        if self.ood_method == "max_probability":
+            prob = F.softmax(pred[0], dim=0)
+            threshold = float(prob[torch.argmax(pred).item()].detach())
+        elif self.ood_method == "max_logit":
+            threshold = float(torch.max(pred).detach())
+
         if not seen:
             self.ood_correct += correct
             self.total_ood += 1
-            self.ood_threshold_log.append(float(prob[torch.argmax(pred).item()].detach()))
+            self.ood_threshold_log.append(threshold)
         else:
-            self.ind_threshold_log.append(float(prob[torch.argmax(pred).item()].detach()))
+            self.ind_threshold_log.append(threshold)
 
         self.counter += 1
     
