@@ -33,6 +33,7 @@ class Options():
         model.add_argument('--num_classes', type=int, default=1000)
         model.add_argument('--pretrained', action = 'store_true', 
                             help ='Initialize model with pretraining')
+        model.add_argument('--path_to_model', type=str, default=None, help='Allows init with different trained models')
         model.add_argument('--similarity_measure', type = str, default = 'euclidean')
         model.add_argument('--split_layers', type = int, default = 1)
 
