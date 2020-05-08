@@ -15,6 +15,8 @@ class Options():
         offline.add_argument('--offline_batch_size', type=int, default=256)
         offline.add_argument('--batch_factor', type=int, default=2)
         offline.add_argument('--trainer', type = str, default = 'batch')
+        offline.add_argument('--transition_num', type = int, default = 5000)
+        offline.add_argument('--ft_interval', type = int, default = 5000) #Hybrid training option for how often to fine tune
 
         #Online Options
         self.online_opts = argparse.ArgumentParser()
@@ -39,11 +41,12 @@ class Options():
         self.sys_opts = argparse.ArgumentParser()
         sys = self.sys_opts.add_argument_group('system options')
         sys.add_argument('--gpu', type=str, default='0')
-        sys.add_argument('--root', type=str, default='')
+        sys.add_argument('--root', type=str, default='GeneralizedPerception')
         sys.add_argument('--result_path', type=str, default='results')
         sys.add_argument('--sequence_num', type=int, default=2)
         sys.add_argument('--experiment_name', type=str, default='Test')
         sys.add_argument('--log_interval', type=int, default=5000)
+        sys.add_argument('--load_path', type = str, default = 'models/test2/pretrained_model.pth')
 
         #Boiler Plate Code
         # online.add_argument('-f', type=str, help = "for debugging in jupyter")
