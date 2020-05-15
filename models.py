@@ -2,7 +2,7 @@ import torchvision.models as models
 import torch
 import torch.nn as nn
 import sys
-from utils import euclidean_metric, cosine_sim
+from utils import euclidean_metric, cosine_sim, dot_product
 import numpy as np
 import os
 from utils import extract_layers
@@ -130,6 +130,8 @@ def create_model(model_opts, sys_opts, device):
             measure = euclidean_metric
         elif model_opts.similarity_measure == 'cosine':
             measure = cosine_sim
+         elif model_opts.similarity_measure == 'cosine':
+            measure = dot_product
         model = Hybrid(backbone, measure, model)
     elif model_opts.classifier == 'ptn':
         measure = euclidean_metric
