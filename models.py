@@ -130,7 +130,7 @@ def create_model(model_opts, sys_opts, device):
             measure = euclidean_metric
         elif model_opts.similarity_measure == 'cosine':
             measure = cosine_sim
-         elif model_opts.similarity_measure == 'cosine':
+        elif model_opts.similarity_measure == 'dot':
             measure = dot_product
         model = Hybrid(backbone, measure, model)
     elif model_opts.classifier == 'ptn':
