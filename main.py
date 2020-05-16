@@ -52,7 +52,7 @@ if __name__ == "__main__":
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
     offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)                          
     trainer = create_trainer(model, device, offline_dataset, args.update_opts, class_map_novel)
-    imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num) + '/' + 'imgs_per_class.npy'))
+    imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num) + '/' + 'imgs_per_class' + str(args.sys_opts.sequence_num) + '.npy'))
     tracker = OnlineMetricTracker(args.sys_opts.experiment_name, imgs_per_class, args.model_opts.num_classes, args.sys_opts.result_path)
     tracker.create_experiment_folder()
     args.log_settings()
