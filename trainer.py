@@ -154,7 +154,7 @@ class HybridTrainer(Trainer):
             for j, (data, label) in enumerate(self.offline_loader):
                 data = data.to(self.device)
                 label = label.to(self.device)
-                pred = self.model(data)
+                pred, _ = self.model(data)
                 loss = F.cross_entropy(pred, label)/self.update_opts.batch_factor
                 loss.backward()
                 if (j+1) % self.update_opts.batch_factor == 0:
