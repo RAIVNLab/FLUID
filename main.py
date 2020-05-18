@@ -27,7 +27,7 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
         batch = batch.to(device)
         prediction, cosine_normalized = model(batch)
         print(prediction.size(), " ,,, ")
-        print(cosine_normalized.size())
+        print(cosine_normalized)
         tracker.track(prediction, label, seen, cosine_normalized)
         if (i+1) % args.online_opts.training_interval == 0:
             trainer.update_dataset(online_dataset.get_samples_seen())
