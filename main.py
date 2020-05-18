@@ -25,8 +25,8 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
     #Note: Shuffle is set to True, but data order is fixed. See ContinuousDatasetRF.__getitem__(). 
     for i, (batch, label, seen) in enumerate(online_loader):
         batch = batch.to(device)
-        prediction = model(batch)
-        tracker.track(prediction, label, seen)
+        prediction, cosine_normalized = model(batch)
+        tracker.track(prediction, label, seen, cosine_normalized)
         if (i+1) % args.online_opts.training_interval == 0:
             trainer.update_dataset(online_dataset.get_samples_seen())
             trainer.update_model()

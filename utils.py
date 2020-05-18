@@ -42,10 +42,10 @@ def euclidean_metric(a, b):
 
 def cosine_sim(a, b):
     eps = 1e-10
-    a_norm = a #/ (a.norm(dim=1)[:, None] + eps)
-    b_norm = b #/ (b.norm(dim=1)[:, None] + eps)
+    a_norm = (a.norm(dim=1)[:, None] + eps)
+    b_norm = (b.norm(dim=1)[:, None] + eps)
     res = torch.mm(a_norm, b_norm.transpose(0, 1))
-    return res
+    return torch.mm(a, b.transpose(0, 1)), res
 
 
 def extract_layers(model, num_layers, params):

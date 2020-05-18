@@ -29,7 +29,7 @@ class OnlineMetricTracker():
         np.save(os.path.join(self.write_path, 'ind_threshold_log'), self.ind_threshold_log)
         np.save(os.path.join(self.write_path, 'per_class_acc'), self.per_class_acc/self.imgs_per_class)
 
-    def track(self, pred, label, seen):
+    def track(self, pred, label, seen, cosine_normalized):
         correct = (torch.argmax(pred).item() == int(label))
         self.accuracy_log.append(correct)
         self.per_class_acc[label] += correct
@@ -41,7 +41,7 @@ class OnlineMetricTracker():
             prob = F.softmax(pred[0], dim=0)
             threshold = float(prob[torch.argmax(pred).item()].detach())
         elif self.ood_method == "max_logit":
-            threshold = float(torch.max(pred).detach())
+            threshold = float(torch.max(cosine_normalized).detach())
 
         if not seen:
             self.ood_correct += correct
