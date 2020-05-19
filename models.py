@@ -103,6 +103,9 @@ def create_model(model_opts, sys_opts, device):
         backbone = models.resnet34(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'resnet-50':
         backbone = models.resnet50(pretrained = model_opts.pretrained)
+        if model_opts.path_to_model is not None:
+            pretrained_model_dict = torch.load(model_opts.path_to_model)
+            backbone.load_state_dict(pretrained_model_dict)
     elif model_opts.backbone == 'mobilenetv2':
         backbone = models.mobilenet_v2(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'densenet-161':
