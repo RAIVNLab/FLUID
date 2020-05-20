@@ -26,6 +26,7 @@ def create_imagenet_map(root):
 
 def create_novel_class_map(root, sequence_num):
     tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
+    print(tmp_path)
     class_map_base = np.load(os.path.join(root, tmp_path), allow_pickle=True).item()
 
     return class_map_base
@@ -45,6 +46,11 @@ def cosine_sim(a, b):
     a_norm = a / (a.norm(dim=1)[:, None] + eps)
     b_norm = b / (b.norm(dim=1)[:, None] + eps)
     res = torch.mm(a_norm, b_norm.transpose(0, 1))
+    return res
+
+
+def dot_product(a,b):
+    res = torch.mm(a, b.transpose(0, 1))
     return res
 
 

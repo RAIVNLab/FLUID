@@ -2,10 +2,11 @@ import torchvision.models as models
 import torch
 import torch.nn as nn
 import sys
-from utils import euclidean_metric, cosine_sim
+from utils import euclidean_metric, cosine_sim, dot_product
 import numpy as np
 import os
 from utils import extract_layers
+from convnet import Convnet
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
@@ -102,10 +103,15 @@ def create_model(model_opts, sys_opts, device):
         backbone = models.resnet34(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'resnet-50':
         backbone = models.resnet50(pretrained = model_opts.pretrained)
+        if model_opts.path_to_model is not None:
+            pretrained_model_dict = torch.load(model_opts.path_to_model)
+            backbone.load_state_dict(pretrained_model_dict)
     elif model_opts.backbone == 'mobilenetv2':
         backbone = models.mobilenet_v2(pretrained = model_opts.pretrained)
     elif model_opts.backbone == 'densenet-161':
         backbone = models.densenet161(pretrained = model_opts.pretrained)
+    elif model_opts.backbone == 'convnet':
+        backbone = Convnet()
     else:
         sys.exit("Given model not in predefined set of models")
     if model_opts.classifier == 'knn':
@@ -127,7 +133,14 @@ def create_model(model_opts, sys_opts, device):
             measure = euclidean_metric
         elif model_opts.similarity_measure == 'cosine':
             measure = cosine_sim
+        elif model_opts.similarity_measure == 'dot':
+            measure = dot_product
         model = Hybrid(backbone, measure, model)
+    elif model_opts.classifier == 'ptn':
+        measure = euclidean_metric
+        backbone = extract_backbone(backbone)
+        model = KNN(backbone, measure)
+        model.load_state_dict(torch.load(os.path.join(sys_opts.root, sys_opts.load_path)))
     else:
         sys.exit("Given classifier not in predefined set of classifiers")
     return model
@@ -152,6 +165,8 @@ def extract_backbone(model):
         modules.append(nn.AdaptiveAvgPool2d(1))
         modules.append(nn.Flatten())
         backbone=nn.Sequential(*modules)
+    elif str(model) == 'Convnet':
+        backbone = model
     else: 
         sys.exit("Model not currently implemented for nearest neighbors. See extract_backbone to implement.")
     return backbone

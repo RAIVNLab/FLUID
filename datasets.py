@@ -8,7 +8,7 @@ import random
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
-from utils import file_to_class, create_imagenet_map, create_novel_class_map
+from utils import file_to_class, create_imagenet_map, create_novel_class_map, create_train_transform
         
 
 class ContinuousDataset(Dataset):
@@ -92,15 +92,15 @@ class ContinuousDatasetRF(Dataset):
         tmp_path = 'S' + str(sequence_num) + '/sequence' + str(sequence_num) + '.npy'
         self.sequence = np.load(os.path.join(root, tmp_path))
 
-        tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
-        novel_classes = create_novel_class_map(root, sequence_num)
+        novel_classes_map = create_novel_class_map(root, sequence_num)
         self.seen_classes.update(range(1000))
-        self.seen_classes -= set(novel_classes.values())
-        class_map_base = novel_classes
-        imagenet_classes = create_imagenet_map(root)
-        self.class_map = imagenet_classes
+        self.seen_classes -= set(novel_classes_map.values())
+        class_map_base = novel_classes_map
+
+        imagenet_class_map = create_imagenet_map(root)
+        self.class_map = imagenet_class_map
         self.class_map.update(class_map_base)
-        tmp_path = 'S' + str(sequence_num) + '/class_count' + str(sequence_num) + '.npy'
+        tmp_path = 'S' + str(sequence_num) + '/imgs_per_class' + str(sequence_num) + '.npy'
         self.imgs_per_class = np.load(os.path.join(root, tmp_path))
         self.counter = -1
         self.root = root
@@ -160,21 +160,28 @@ class OfflineDatasetRF(Dataset):
     
 class CategoriesSampler():
 
-    def __init__(self, n_batch, n_cls, n_per):
+    def __init__(self, label, n_batch, n_cls, n_per):
         self.n_batch = n_batch
         self.n_cls = n_cls
         self.n_per = n_per
 
-    def __len__(self):
-        return self.n_batch
-    
-    def update(self, new_label):
+        label = np.array(label)
         self.m_ind = []
-        for i in range(max(new_label) + 1):
-            ind = np.argwhere(new_label == i).reshape(-1)
+        for i in range(max(label) + 1):
+            ind = np.argwhere(label == i).reshape(-1)
             ind = torch.from_numpy(ind)
             self.m_ind.append(ind)
-        
+
+    def __len__(self):
+        return self.n_batch
+
+    # def update(self, new_label):
+    #     self.m_ind = []
+    #     for i in range(max(new_label) + 1):
+    #         ind = np.argwhere(new_label == i).reshape(-1)
+    #         ind = torch.from_numpy(ind)
+    #         self.m_ind.append(ind)
+
     def __iter__(self):
         for i_batch in range(self.n_batch):
             batch = []
@@ -186,8 +193,39 @@ class CategoriesSampler():
                 l = self.m_ind[c]
                 pos = torch.randperm(len(l))[:self.n_per]
                 batch.append (l[pos])
-
-
             batch = torch.stack(batch).t().reshape(-1)
             yield batch
-    
+
+class MetaImageNet(Dataset):
+
+    def __init__(self, root):
+        # csv_path = osp.join(ROOT_PATH, setname + '.csv')
+        # lines = [x.strip() for x in open(csv_path, 'r').readlines()][1:]
+
+        data = []
+        label = []
+        lb = 0
+
+        self.wnids = []
+        folders = os.listdir(root)
+        for folder in folders:
+            folder_path = os.path.join(root, folder)
+            for file in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, file)
+                data.append(file_path)
+                label.append(lb)
+            lb += 1
+
+
+        self.data = data
+        self.label = label
+
+        self.tf = create_train_transform()
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        path, label = self.data[i], self.label[i]
+        image = self.tf(Image.open(path).convert('RGB'))
+        return image, label

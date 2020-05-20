@@ -88,7 +88,7 @@ class HybridTrainer(Trainer):
         #self.model.base = torch.nn.Parameter(centroids.to(device))
 
         self.num_layers = update_opts.num_layers
-        extract_layers(self.model, 3, self.params)
+        extract_layers(self.model, self.num_layers, self.params)
         # self.optimizer = torch.optim.SGD([self.model.centroids]+self.params, self.update_opts.lr,
         #                             momentum=self.update_opts.m,
         #                             weight_decay=1e-4)
@@ -97,11 +97,9 @@ class HybridTrainer(Trainer):
         self.counter = 0
 
     def update_model(self):
-        n = 5000
-        z = 5000
-        if self.offline_dataset.counter+1 <= n:
+        if self.offline_dataset.counter+1 <= self.update_opts.transition_num:
             self.initialize_centroids()
-        if self.offline_dataset.counter+1 == (n):
+        if self.offline_dataset.counter+1 == self.update_opts.transition_num:
             print('reinitializing')
             del self.running_labels
             del self.running_proto
@@ -111,7 +109,7 @@ class HybridTrainer(Trainer):
                                     weight_decay=1e-4)  
             #self.scheduler = torch.optim.lr_scheduler.CyclicLR(
         #print(self.offline_dataset.counter > (n+z) and (self.offline_dataset.counter+1) % 5000 == 0)
-        if self.offline_dataset.counter >= (n) and (self.offline_dataset.counter+1) % 5000 == 0:
+        if self.offline_dataset.counter >= self.update_opts.transition_num and (self.offline_dataset.counter+1) % self.update_opts.ft_interval == 0:
             print('training')
             self.train()
 
@@ -234,48 +232,6 @@ class NoTrain(Trainer):
 
     def update_model(self):
         pass
-
-
-class PrototypicalNetwork(Trainer):
-    def __init__(self, model, device, update_opts, offline_dataset):
-        self.model = model
-        self.optimizer = optimizer
-        self.batch_factor = batch_factor
-        self.dataset = offline_dataset
-        self.way = way
-        self.query = query
-        self.num_classes = num_classes
-        self.shot = shot
-        self.centroids = torch.zeros([num_classes, 1600]).cuda()
-        self.sampler = CategoriesSampler(10, way, query + shot)
-        self.meta_loader = torch.utils.data.DataLoader(self.dataset, num_workers=8, pin_memory = True, 
-                                                  batch_sampler = self.sampler)
-        self.centroid_loader = torch.utils.data.DataLoader(self.dataset, num_workers=8, pin_memory = True, batch_size = 64)
-
-
-
-    def train(self, epochs):
-        self.dataset.update()
-        _, new_labels = self.online_dataset.get_observed_samples()
-        self.sampler.update(new_labels)
-        self.net.train()
-        for epoch in range(epochs):
-            for j, (data, _) in enumerate(self.meta_loader):
-                data = data.cuda()
-                p = self.shot * self.way
-                q = self.query * self.way
-                support = data[:p] 
-                query = data[p:]
-                label = torch.arange(self.way).repeat(self.query)
-                label = label.type(torch.cuda.LongTensor)
-                proto = self.net(support)
-                proto = proto.reshape(self.shot, self.way, -1).mean(dim=0)
-                logits = -euclidean_metric(self.net(query), proto)
-                loss = F.cross_entropy(logits, label)
-                loss.backward()
-                self.optimizer.step()
-                self.optimizer.zero_grad()
-        self.net.eval()
 
 
 def create_trainer(model, device, offline_dataset, update_opts, class_map):
