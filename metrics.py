@@ -4,11 +4,12 @@ import torch
 import torch.nn.functional as F
 
 
-class OnlineMetricTracker():
-    def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = '', ood_method="max_logit"):
-        self.ood_correct = 0 #out of distribution accuracy
-        self.ood_method = ood_method
-        print(self.ood_method)
+class OnlineMetricTracker:
+    def __init__(self, experiment_name, imgs_per_class, num_classes = 1000, result_path = '',
+                 report_ood=False):
+        self.ood_correct = 0  # out of distribution accuracy
+        self.report_ood = report_ood
+        print("Report OOD = ", self.report_ood)
         self.total_ood = 0
         self.accuracy_log = []
         self.ood_softmax_threshold_log = []
@@ -61,6 +62,7 @@ class OnlineMetricTracker():
         start = int(np.clip(current_sample-interval_length, 0, np.inf))
         true_length = current_sample - start
         return np.sum(self.accuracy_log[start:])/true_length
+
     def create_experiment_folder(self):
         if not os.path.isdir(self.write_path):
             os.mkdir(self.write_path)
