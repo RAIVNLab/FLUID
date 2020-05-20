@@ -54,7 +54,8 @@ class Options():
         # Out of distribution detection
         self.ood_opts = argparse.ArgumentParser()
         ood_opts = self.ood_opts.add_argument_group('out-of-distribution options')
-        ood_opts.add_argument('--ood_method', type=str, default='max_logit')
+        ood_opts.add_argument('--report_ood', action='store_true',
+                           help='Report ood metrics')
 
     def parse_args(self):
         self.update_opts = self.update_opts.parse_known_args()[0]

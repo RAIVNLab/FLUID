@@ -11,8 +11,10 @@ class OnlineMetricTracker():
         print(self.ood_method)
         self.total_ood = 0
         self.accuracy_log = []
-        self.ood_threshold_log = []
-        self.ind_threshold_log = []
+        self.ood_softmax_threshold_log = []
+        self.ind_softmax_threshold_log = []
+        self.ood_logits_threshold_log = []
+        self.ind_logits_threshold_log = []
         self.per_class_acc = np.zeros(num_classes)
         self.per_class_samples = np.zeros(num_classes)
         self.experiment_name = experiment_name
@@ -25,8 +27,11 @@ class OnlineMetricTracker():
         print(self.ood_correct, " ", self.total_ood)
         np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.total_ood)
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
-        np.save(os.path.join(self.write_path, 'ood_threshold_log'), self.ood_threshold_log)
-        np.save(os.path.join(self.write_path, 'ind_threshold_log'), self.ind_threshold_log)
+        np.save(os.path.join(self.write_path, 'ood_softmax_threshold_log'), self.ood_softmax_threshold_log)
+        np.save(os.path.join(self.write_path, 'ind_softmax_threshold_log'), self.ind_softmax_threshold_log)
+        np.save(os.path.join(self.write_path, 'ood_logits_threshold_log'), self.ood_logits_threshold_log)
+        np.save(os.path.join(self.write_path, 'ind_logits_threshold_log'), self.ind_logits_threshold_log)
+
         np.save(os.path.join(self.write_path, 'per_class_acc'), self.per_class_acc/self.imgs_per_class)
 
     def track(self, pred, label, seen):
@@ -37,18 +42,18 @@ class OnlineMetricTracker():
         # print(correct, " ", torch.argmax(pred).item(), " ", label, " ", prob[torch.argmax(pred).item()],
         #       torch.sum(prob * prob), " seen  = ", seen)
 
-        if self.ood_method == "max_probability":
+        if self.report_ood:
             prob = F.softmax(pred[0], dim=0)
-            threshold = float(prob[torch.argmax(pred).item()].detach())
-        elif self.ood_method == "max_logit":
-            threshold = float(torch.max(pred).detach())
-
-        if not seen:
-            self.ood_correct += correct
-            self.total_ood += 1
-            self.ood_threshold_log.append(threshold)
-        else:
-            self.ind_threshold_log.append(threshold)
+            threshold_softmax = float(prob[torch.argmax(pred).item()].detach())
+            threshold_logits = float(torch.max(pred).detach())
+            if not seen:
+                self.ood_correct += correct
+                self.total_ood += 1
+                self.ood_softmax_threshold_log.append(threshold_softmax)
+                self.ood_logits_threshold_log.append(threshold_logits)
+            else:
+                self.ind_softmax_threshold_log.append(threshold_softmax)
+                self.ind_logits_threshold_log.append(threshold_logits)
 
         self.counter += 1
     
