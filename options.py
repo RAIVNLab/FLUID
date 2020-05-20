@@ -15,7 +15,7 @@ class Options():
         offline.add_argument('--offline_batch_size', type=int, default=256)
         offline.add_argument('--batch_factor', type=int, default=2)
         offline.add_argument('--trainer', type=str, default='batch')
-        offline.add_argument('--transition_num', type=int, default=5000)
+        offline.add_argument('--transition_num', type=int, default=10000)
         offline.add_argument('--ft_interval', type=int, default=5000) #Hybrid training option for how often to fine tune
 
         #  Online Options
