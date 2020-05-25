@@ -30,7 +30,7 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
         if (i+1) % args.online_opts.training_interval == 0:
             trainer.update_dataset(online_dataset.get_samples_seen())
             trainer.update_model()
-        if (i+1) % args.sys_opts.log_interval == 0:    
+        if (i+1) % args.sys_opts.log_interval == 0:
             j = online_dataset.get_samples_seen()
             acc = tracker.current_accuracy(args.sys_opts.log_interval, j)
             print('Training after sample: {}'.format(j))
@@ -52,8 +52,10 @@ if __name__ == "__main__":
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
     offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)                          
     trainer = create_trainer(model, device, offline_dataset, args.update_opts, class_map_novel)
-    imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num) + '/' + 'imgs_per_class' + str(args.sys_opts.sequence_num) + '.npy'))
-    tracker = OnlineMetricTracker(args.sys_opts.experiment_name, imgs_per_class, args.model_opts.num_classes, args.sys_opts.result_path)
+    imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num)
+                                          + '/' + 'imgs_per_class' + str(args.sys_opts.sequence_num) + '.npy'))
+    tracker = OnlineMetricTracker(args.sys_opts.experiment_name, imgs_per_class, args.model_opts.num_classes,
+                                  args.sys_opts.result_path, args.ood_opts.report_ood)
     tracker.create_experiment_folder()
     args.log_settings()
     sequential_eval(model, trainer, online_dataset, tracker, args)

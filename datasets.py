@@ -91,9 +91,14 @@ class ContinuousDatasetRF(Dataset):
         self.transform = transform
         tmp_path = 'S' + str(sequence_num) + '/sequence' + str(sequence_num) + '.npy'
         self.sequence = np.load(os.path.join(root, tmp_path))
-        
-        class_map_base = create_novel_class_map(root, sequence_num)
-        self.class_map = create_imagenet_map(root)
+
+        novel_classes_map = create_novel_class_map(root, sequence_num)
+        self.seen_classes.update(range(1000))
+        self.seen_classes -= set(novel_classes_map.values())
+        class_map_base = novel_classes_map
+
+        imagenet_class_map = create_imagenet_map(root)
+        self.class_map = imagenet_class_map
         self.class_map.update(class_map_base)
         tmp_path = 'S' + str(sequence_num) + '/imgs_per_class' + str(sequence_num) + '.npy'
         self.imgs_per_class = np.load(os.path.join(root, tmp_path))
@@ -170,14 +175,14 @@ class CategoriesSampler():
 
     def __len__(self):
         return self.n_batch
-    
+
     # def update(self, new_label):
     #     self.m_ind = []
     #     for i in range(max(new_label) + 1):
     #         ind = np.argwhere(new_label == i).reshape(-1)
     #         ind = torch.from_numpy(ind)
     #         self.m_ind.append(ind)
-        
+
     def __iter__(self):
         for i_batch in range(self.n_batch):
             batch = []
@@ -191,7 +196,7 @@ class CategoriesSampler():
                 batch.append (l[pos])
             batch = torch.stack(batch).t().reshape(-1)
             yield batch
-    
+
 class MetaImageNet(Dataset):
 
     def __init__(self, root):
