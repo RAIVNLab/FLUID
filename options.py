@@ -46,15 +46,9 @@ class Options():
         sys.add_argument('--sequence_num', type=int, default=2)
         sys.add_argument('--experiment_name', type=str, default='Test')
         sys.add_argument('--log_interval', type=int, default=5000)
-<<<<<<< HEAD
         sys.add_argument('--load_path', type = str, default = 'models/2020-05-17_214804/model.th')
         
         #Boiler Plate Code
-=======
-        sys.add_argument('--load_path', type = str, default = 'models/test2/pretrained_model.pth')
-
-        # Boiler Plate Code
->>>>>>> 69dcdb1a1f93883ca2b5d779234607a5806589c5
         # online.add_argument('-f', type=str, help = "for debugging in jupyter")
         # model.add_argument('-f', type=str, help = "for debugging in jupyter")
         # offline.add_argument('-f', type=str, help = "for debugging in jupyter")
