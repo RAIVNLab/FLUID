@@ -7,6 +7,9 @@ import numpy as np
 import os
 from utils import extract_layers
 from convnet import Convnet
+import sys
+sys.path.insert(0, "pytorchmaml/")
+from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
@@ -94,6 +97,11 @@ class Hybrid(nn.Module):
 
 
 def create_model(model_opts, sys_opts, device):
+    if model_opts.classifier == 'maml':
+        model = ModelConvMiniImagenet(5, hidden_size=64)
+        model.load_state_dict(torch.load(os.path.join(sys_opts.root, sys_opts.load_path)))
+        model.classifier = nn.Linear(12544,1000)
+        return model
     if model_opts.backbone == 'resnet-18':
         backbone = models.resnet18(pretrained = model_opts.pretrained)
         if model_opts.path_to_model is not None:

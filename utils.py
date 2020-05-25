@@ -22,9 +22,7 @@ def create_imagenet_map(root):
 
 def create_novel_class_map(root, sequence_num):
     tmp_path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
-    print(tmp_path)
     class_map_base = np.load(os.path.join(root, tmp_path), allow_pickle = True).item()
-
     return class_map_base
 
 def euclidean_metric(a, b):
@@ -76,6 +74,17 @@ def create_test_transform():
     return test_tf
 
 def create_train_transform():
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+    train_tf = transforms.Compose([
+        transforms.RandomResizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        normalize,
+    ])
+    return train_tf
+
+def create_train_transform2():
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
     train_tf = transforms.Compose([

@@ -130,6 +130,7 @@ class OfflineDatasetRF(Dataset):
         path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
         self.class_map = create_imagenet_map(root)
+        #base = {key:val for key, val in self.class_map if val not in pos}
         self.class_map.update(class_map_base)
         self.counter = 0
         self.root = root
