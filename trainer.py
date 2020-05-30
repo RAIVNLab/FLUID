@@ -234,6 +234,42 @@ class NoTrain(Trainer):
         pass
 
 
+class OLTRTrainer(Trainer):
+    def __init__(self, model, device, update_opts, offline_dataset):
+        super().__init__(model, device, update_opts, offline_dataset)
+        self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
+                                    momentum=update_opts.m,
+                                    weight_decay=1e-4)
+
+    def update_model(self):
+        for i in range(self.update_opts.epochs):
+            for model in self.model.networks.values():
+                model.train()
+
+            torch.cuda.empty_cache()
+            for j, (data, label) in enumerate(self.offline_loader):
+                data = data.to(self.device)
+                labels = label.to(self.device)
+                with torch.set_grad_enabled(True):
+                    # If training, forward with loss, and no top 5 accuracy calculation
+                    self.model.batch_forward(data, labels,
+                                       centroids=self.model.memory['centroids'],
+                                       phase='train')
+                    self.model.batch_loss(labels)
+                    self.model.batch_backward()
+
+                # pred = self.model(data)
+                # loss = F.cross_entropy(pred, label)/self.update_opts.batch_factor
+                # loss.backward()
+                # if (j+1) % self.update_opts.batch_factor == 0:
+                #     self.optimizer.step()
+                #     self.model.zero_grad()
+
+        torch.cuda.empty_cache()
+        # reset to eval mode
+        for model in self.model.networks.values():
+            model.eval()
+
 def create_trainer(model, device, offline_dataset, update_opts, class_map):
     if update_opts.trainer == 'batch':
         trainer = BatchTrainer(model, device, update_opts, offline_dataset)
