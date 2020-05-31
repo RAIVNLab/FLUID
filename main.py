@@ -17,6 +17,8 @@ from metrics import OnlineMetricTracker
 from utils import extract_layers
 
 warnings.filterwarnings("ignore", "(Possibly )?corrupt EXIF data", UserWarning)
+sys.path.insert(0, os.path.abspath("OLTR1/"))
+from run_networks import model as oltr_model
 
 
 def sequential_eval(model, trainer, online_dataset, tracker, args):
