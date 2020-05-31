@@ -57,7 +57,7 @@ class LT_Dataset(Dataset):
 # Load datasets
 def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_workers=4, test_open=False, shuffle=True):
     
-    txt = './data/%s/%s_%s.txt'%(dataset, dataset, (phase if phase != 'train_plain' else 'train'))
+    txt = 'OLTR1/data/%s/%s_%s.txt'%(dataset, dataset, (phase if phase != 'train_plain' else 'train'))
 
     print('Loading data from %s' % (txt))
 
@@ -71,7 +71,7 @@ def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_worke
     set_ = LT_Dataset(data_root, txt, transform)
 
     if phase == 'test' and test_open:
-        open_txt = './data/%s/%s_open.txt'%(dataset, dataset)
+        open_txt = 'OLTR1/data/%s/%s_open.txt'%(dataset, dataset)
         print('Testing with opensets from %s'%(open_txt))
         open_set_ = LT_Dataset('./data/%s/%s_open'%(dataset, dataset), open_txt, transform)
         set_ = ConcatDataset([set_, open_set_])
