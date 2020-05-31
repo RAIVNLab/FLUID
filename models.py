@@ -1,7 +1,6 @@
 import torchvision.models as models
 import torch
 import torch.nn as nn
-import sys
 from utils import euclidean_metric, cosine_sim, dot_product
 import numpy as np
 import os
