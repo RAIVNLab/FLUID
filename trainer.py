@@ -243,7 +243,7 @@ class OLTRTrainer(Trainer):
         self.running_class_count = torch.zeros(1000).to(self.device)
         self.sample_counter = 0
 
-    def update_dataset(self):
+    def update_model(self):
         if self.offline_dataset.counter+1 <= self.update_opts.transition_num:
             self.initialize_memory()
         print('training')
