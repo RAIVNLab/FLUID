@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.abspath("OLTR1/"))
 from OLTR1.run_networks import model as oltr_model
 from OLTR1.utils import source_import
-from OLTR.data import dataloader as oltr_dataloader
+from OLTR1.data import dataloader as oltr_dataloader
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
