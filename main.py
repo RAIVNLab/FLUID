@@ -59,7 +59,7 @@ if __name__ == "__main__":
     test_tf = create_test_transform()
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
     offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)
-    print("After creating datasets")
+    print("---After creating datasets")
     trainer = create_trainer(model, device, offline_dataset, args.update_opts, class_map_novel)
     imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num)
                                           + '/' + 'imgs_per_class' + str(args.sys_opts.sequence_num) + '.npy'))
