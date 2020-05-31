@@ -237,9 +237,9 @@ class NoTrain(Trainer):
 class OLTRTrainer(Trainer):
     def __init__(self, model, device, update_opts, offline_dataset):
         super().__init__(model, device, update_opts, offline_dataset)
-        self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
-                                    momentum=update_opts.m,
-                                    weight_decay=1e-4)
+        # self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
+        #                             momentum=update_opts.m,
+        #                             weight_decay=1e-4)
         self.running_class_count = torch.zeros(1000).to(self.device)
         self.sample_counter = 0
 

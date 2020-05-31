@@ -23,6 +23,7 @@ from run_networks import model as oltr_model
 
 
 def sequential_eval(model, trainer, online_dataset, tracker, args):
+    print("Sequential eval just started")
     device = torch.device('cuda', args.sys_opts.gpu[0])
     online_loader = torch.utils.data.DataLoader(online_dataset, batch_size = 1, shuffle = True, num_workers=0)
     #Note: Shuffle is set to True, but data order is fixed. See ContinuousDatasetRF.__getitem__(). 
@@ -49,13 +50,16 @@ if __name__ == "__main__":
     args = Options()
     args.parse_args()
     device = torch.device('cuda', args.sys_opts.gpu[0])
+    print("---After device")
     model = create_model(args.model_opts, args.sys_opts, device)
+    print("---After model creation")
     class_map_novel = create_novel_class_map(args.sys_opts.root, args.sys_opts.sequence_num)
 
     train_tf = create_train_transform()
     test_tf = create_test_transform()
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
-    offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)                          
+    offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)
+    print("After creating datasets")
     trainer = create_trainer(model, device, offline_dataset, args.update_opts, class_map_novel)
     imgs_per_class = np.load(os.path.join(args.sys_opts.root, 'S' + str(args.sys_opts.sequence_num)
                                           + '/' + 'imgs_per_class' + str(args.sys_opts.sequence_num) + '.npy'))
