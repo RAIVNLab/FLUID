@@ -15,6 +15,7 @@ import warnings
 from options import Options
 from metrics import OnlineMetricTracker
 from utils import extract_layers
+import sys
 
 warnings.filterwarnings("ignore", "(Possibly )?corrupt EXIF data", UserWarning)
 sys.path.insert(0, os.path.abspath("OLTR1/"))
