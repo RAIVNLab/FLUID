@@ -1,8 +1,8 @@
 import os
 import argparse
 import pprint
-from data import dataloader
-from run_networks import model
+from OLTR1.data import dataloader
+from OLTR1.run_networks import model
 import warnings
 from OLTR1.utils import source_import
 
