@@ -341,7 +341,7 @@ class model ():
     def centroids_cal(self, data, class_count):
 
         centroids = torch.zeros(self.training_opt['num_classes'],
-                                   self.training_opt['feature_dim']).cuda()
+                                   self.training_opt['feature_dim']).to(self.device)
 
         print('Calculating centroids.')
 
