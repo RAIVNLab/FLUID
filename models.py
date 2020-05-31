@@ -8,8 +8,8 @@ import os
 from utils import extract_layers
 from convnet import Convnet
 import sys
-sys.path.insert(0, "pytorchmaml/")
-from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
+# sys.path.insert(0, "pytorchmaml/")
+# from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
 sys.path.insert(0, os.path.abspath("OLTR1/"))
 from OLTR1.run_networks import model as oltr_model
 from OLTR1.utils import source_import
@@ -120,6 +120,7 @@ def create_oltr_model(model_opts, sys_opts, device):
 def create_model(model_opts, sys_opts, device):
     if model_opts.backbone == 'oltr':
         model = create_oltr_model(model_opts, sys_opts, device)
+        return model
     if model_opts.classifier == 'maml':
         model = ModelConvMiniImagenet(5, hidden_size=64)
         model.load_state_dict(torch.load(os.path.join(sys_opts.root, sys_opts.load_path)))
