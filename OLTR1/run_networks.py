@@ -360,7 +360,7 @@ class model ():
 
         # Average summed features with class count
         centroids /= class_count
-
+        print("centroids calculated")
         return centroids
 
     def load_model(self):
