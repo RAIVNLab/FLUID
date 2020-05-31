@@ -65,6 +65,7 @@ class model ():
 
             # Networks
             def_file = val['def_file']
+            print(def_file)
             model_args = list(val['params'].values())
             model_args.append(self.test_mode)
 
