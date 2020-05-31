@@ -44,7 +44,7 @@ class model ():
             self.init_criterions()
             if self.memory['init_centroids']:
                 self.criterions['FeatureLoss'].centroids.data = \
-                    self.centroids_cal(self.data['train_plain'])
+                    self.centroids_cal(self.data['train_plain'], torch.tensor(class_count(data)).float().unsqueeze(1).cuda())
             
         # Set up log file
         self.log_file = os.path.join(self.training_opt['log_dir'], 'log.txt')
@@ -335,7 +335,7 @@ class model ():
         else:
             print(*print_str)
             
-    def centroids_cal(self, data):
+    def centroids_cal(self, data, class_count):
 
         centroids = torch.zeros(self.training_opt['num_classes'],
                                    self.training_opt['feature_dim']).cuda()
@@ -358,7 +358,7 @@ class model ():
                     centroids[label] += self.features[i]
 
         # Average summed features with class count
-        centroids /= torch.tensor(class_count(data)).float().unsqueeze(1).cuda()
+        centroids /= class_count
 
         return centroids
 
