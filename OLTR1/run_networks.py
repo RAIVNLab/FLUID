@@ -43,6 +43,7 @@ class model ():
             self.model_optimizer_scheduler = self.init_optimizers(self.model_optim_params_list)
             self.init_criterions()
             if self.memory['init_centroids']:
+                print("We are doing init centroids")
                 self.criterions['FeatureLoss'].centroids.data = \
                     self.centroids_cal(self.data['train_plain'], torch.tensor(class_count(self.data['train_plain'])).float().unsqueeze(1).cuda())
             
