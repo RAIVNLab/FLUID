@@ -97,10 +97,12 @@ class Hybrid(nn.Module):
         self.centroids.data = self.centroids.data.to(device)
         self.backbone = self.backbone.to(device)
 
+def create_oltr_model(model_opts, sys_opts, device):
+    config = source_import(args.config).config
 
 def create_model(model_opts, sys_opts, device):
     if model_opts.backbone == 'oltr':
-        model = oltr_model()
+        model = create_oltr_model(model_opts, sys_opts, device)
     if model_opts.classifier == 'maml':
         model = ModelConvMiniImagenet(5, hidden_size=64)
         model.load_state_dict(torch.load(os.path.join(sys_opts.root, sys_opts.load_path)))

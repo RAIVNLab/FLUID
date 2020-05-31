@@ -240,8 +240,26 @@ class OLTRTrainer(Trainer):
         self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
                                     momentum=update_opts.m,
                                     weight_decay=1e-4)
+        self.running_class_count = torch.zeros(1000).to(self.device)
+        self.sample_counter = 0
 
-    def update_model(self):
+    def update_dataset(self):
+        if self.offline_dataset.counter+1 <= self.update_opts.transition_num:
+            self.initialize_memory()
+        print('training')
+        self.train()
+
+    def initialize_memory(self):
+        total_samples = self.offline_dataset.counter
+        eps = 1e-8
+        for i in range(self.sample_counter, total_samples):
+            _, label = self.offline_dataset.__getitem__(i)
+            self.running_class_count[label] += 1
+        self.sample_counter = total_samples
+        self.model.criterions['FeatureLoss'].centroids.data = \
+            self.model.centroids_cal(self.offline_loader, self.running_class_count+eps) #TODO Should implement this in centroids_cal
+
+    def train(self):
         for i in range(self.update_opts.epochs):
             for model in self.model.networks.values():
                 model.train()
