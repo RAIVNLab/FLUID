@@ -44,7 +44,7 @@ class model ():
             self.init_criterions()
             if self.memory['init_centroids']:
                 self.criterions['FeatureLoss'].centroids.data = \
-                    self.centroids_cal(self.data['train_plain'], torch.tensor(class_count(data)).float().unsqueeze(1).cuda())
+                    self.centroids_cal(self.data['train_plain'], torch.tensor(class_count(self.data['train_plain'])).float().unsqueeze(1).cuda())
             
         # Set up log file
         self.log_file = os.path.join(self.training_opt['log_dir'], 'log.txt')

@@ -116,6 +116,7 @@ def create_oltr_model(model_opts, sys_opts, device):
             for x in (['train', 'val', 'train_plain'] if relatin_opt['init_centroids'] else ['train', 'val'])}
 
     training_model = oltr_model(config, data, test=False)
+    return training_model
 
 def create_model(model_opts, sys_opts, device):
     if model_opts.backbone == 'oltr':
