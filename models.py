@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.abspath("OLTR1/"))
 from OLTR1.run_networks import model as oltr_model
 from OLTR1.utils import source_import
+from OLTR.data import dataloader as oltr_dataloader
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
@@ -108,7 +109,7 @@ def create_oltr_model(model_opts, sys_opts, device):
 
     sampler_dic = None
 
-    data = {x: dataloader.load_data(data_root=data_root[dataset.rstrip('_LT')], dataset=dataset, phase=x,
+    data = {x: oltr_dataloader.load_data(data_root=data_root[dataset.rstrip('_LT')], dataset=dataset, phase=x,
                                     batch_size=training_opt['batch_size'],
                                     sampler_dic=sampler_dic,
                                     num_workers=training_opt['num_workers'])
