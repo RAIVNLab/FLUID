@@ -42,6 +42,7 @@ class model ():
             self.model_optimizer, \
             self.model_optimizer_scheduler = self.init_optimizers(self.model_optim_params_list)
             self.init_criterions()
+            print("self.memory['init_centroids']", self.memory['init_centroids'])
             if self.memory['init_centroids']:
                 print("We are doing init centroids")
                 self.criterions['FeatureLoss'].centroids.data = \
