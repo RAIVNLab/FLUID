@@ -3,7 +3,7 @@ config = {}
 
 training_opt = {}
 training_opt['dataset'] = 'ImageNet_LT'
-training_opt['log_dir'] = './logs/ImageNet_LT/stage1'
+training_opt['log_dir'] = 'OLTR1/logs/ImageNet_LT/stage1'
 training_opt['num_classes'] = 1000
 training_opt['batch_size'] = 128
 training_opt['num_workers'] = 8

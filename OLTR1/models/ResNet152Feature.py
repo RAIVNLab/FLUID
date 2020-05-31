@@ -13,13 +13,13 @@ def create_model(use_modulatedatt=False, use_fc=False, dropout=None, stage1_weig
         if caffe:
             print('Loading Caffe Pretrained ResNet 152 Weights.')
             resnet152 = init_weights(model=resnet152,
-                                     weights_path='./logs/caffe_resnet152.pth',
+                                     weights_path='OLTR1/logs/caffe_resnet152.pth',
                                      caffe=True)
         elif stage1_weights:
             assert(dataset)
             print('Loading %s Stage 1 ResNet 152 Weights.' % dataset)
             resnet152 = init_weights(model=resnet152,
-                                     weights_path='./logs/%s/stage1/final_model_checkpoint.pth' % dataset)
+                                     weights_path='OLTR1/logs/%s/stage1/final_model_checkpoint.pth' % dataset)
         else:
             print('No Pretrained Weights For Feature Model.')
 

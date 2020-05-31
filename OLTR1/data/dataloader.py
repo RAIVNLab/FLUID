@@ -73,7 +73,7 @@ def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_worke
     if phase == 'test' and test_open:
         open_txt = 'OLTR1/data/%s/%s_open.txt'%(dataset, dataset)
         print('Testing with opensets from %s'%(open_txt))
-        open_set_ = LT_Dataset('./data/%s/%s_open'%(dataset, dataset), open_txt, transform)
+        open_set_ = LT_Dataset('OLTR1/data/%s/%s_open'%(dataset, dataset), open_txt, transform)
         set_ = ConcatDataset([set_, open_set_])
 
     if sampler_dic and phase == 'train':

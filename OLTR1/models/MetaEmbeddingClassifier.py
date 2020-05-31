@@ -59,7 +59,7 @@ def create_model(feat_dim=2048, num_classes=1000, stage1_weights=False, dataset=
             assert(dataset)
             print('Loading %s Stage 1 Classifier Weights.' % dataset)
             clf.fc_hallucinator = init_weights(model=clf.fc_hallucinator,
-                                                    weights_path='./logs/%s/stage1/final_model_checkpoint.pth' % dataset,
+                                                    weights_path='OLTR1/logs/%s/stage1/final_model_checkpoint.pth' % dataset,
                                                     classifier=True)
         else:
             print('Random initialized classifier weights.')
