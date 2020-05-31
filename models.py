@@ -11,7 +11,8 @@ import sys
 sys.path.insert(0, "pytorchmaml/")
 from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
 sys.path.insert(0, os.path.abspath("OLTR1/"))
-from run_networks import model as oltr_model
+from OLTR1.run_networks import model as oltr_model
+from OLTR1.utils import source_import
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
@@ -98,7 +99,23 @@ class Hybrid(nn.Module):
         self.backbone = self.backbone.to(device)
 
 def create_oltr_model(model_opts, sys_opts, device):
-    config = source_import(args.config).config
+    data_root = {'ImageNet': '/usr/data/imagenet',
+                 'Places': '/home/public/dataset/Places365'}
+    config = source_import('OLTR1/config/ImageNet_LT/stage_2_meta_embedding.py').config
+    training_opt = config['training_opt']
+    # change
+    relatin_opt = config['memory']
+    dataset = training_opt['dataset']
+
+    sampler_dic = None
+
+    data = {x: dataloader.load_data(data_root=data_root[dataset.rstrip('_LT')], dataset=dataset, phase=x,
+                                    batch_size=training_opt['batch_size'],
+                                    sampler_dic=sampler_dic,
+                                    num_workers=training_opt['num_workers'])
+            for x in (['train', 'val', 'train_plain'] if relatin_opt['init_centroids'] else ['train', 'val'])}
+
+    training_model = oltr_model(config, data, test=False)
 
 def create_model(model_opts, sys_opts, device):
     if model_opts.backbone == 'oltr':
