@@ -115,7 +115,7 @@ def create_oltr_model(model_opts, sys_opts, device):
                                     num_workers=training_opt['num_workers'])
             for x in (['train', 'val', 'train_plain'] if relatin_opt['init_centroids'] else ['train', 'val'])}
 
-    training_model = oltr_model(config, data, test=False, gpu=sys_opts.gpu)
+    training_model = oltr_model(config, data, test=False, gpu=sys_opts.gpu[0])
     return training_model
 
 def create_model(model_opts, sys_opts, device):
