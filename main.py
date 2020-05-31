@@ -47,7 +47,6 @@ if __name__ == "__main__":
     args.parse_args()
     device = torch.device('cuda', args.sys_opts.gpu[0])
     model = create_model(args.model_opts, args.sys_opts, device)
-    model.to(device)
     class_map_novel = create_novel_class_map(args.sys_opts.root, args.sys_opts.sequence_num)
 
     train_tf = create_train_transform()
