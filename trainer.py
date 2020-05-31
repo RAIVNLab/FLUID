@@ -24,7 +24,8 @@ import sys
 class Trainer(ABC):
     @abstractmethod
     def __init__(self, model, device, update_opts, offline_dataset):
-        self.model = model.eval()
+        for model in self.model.networks.values():
+            model.eval()
         self.device = device
         self.update_opts = update_opts
         self.offline_dataset = offline_dataset
