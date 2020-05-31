@@ -9,7 +9,6 @@ from convnet import Convnet
 import sys
 # sys.path.insert(0, "pytorchmaml/")
 # from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
-sys.path.insert(0, os.path.abspath("OLTR1/"))
 from OLTR1.run_networks import model as oltr_model
 from OLTR1.utils import source_import
 
