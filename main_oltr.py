@@ -1,6 +1,6 @@
 import sys
-sys.path.insert(0, os.path.abspath("OLTR1/"))
 import os
+sys.path.insert(0, os.path.abspath("OLTR1/"))
 import argparse
 import pprint
 from data import dataloader
