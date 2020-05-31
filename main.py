@@ -29,6 +29,7 @@ def sequential_eval(model, trainer, online_dataset, tracker, args):
     #Note: Shuffle is set to True, but data order is fixed. See ContinuousDatasetRF.__getitem__(). 
     for i, (batch, label, seen) in enumerate(online_loader):
         batch = batch.to(device)
+        model.centroids = model.criterions['FeatureLoss'].centroids.data
         model.batch_forward(batch, label,
                            centroids=model.memory['centroids'],
                            phase='test')
