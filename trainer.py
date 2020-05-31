@@ -289,7 +289,9 @@ class OLTRTrainer(Trainer):
             model.eval()
 
 def create_trainer(model, device, offline_dataset, update_opts, class_map):
-    if update_opts.trainer == 'batch':
+    if update_opts.trainer == 'oltr':
+        trainer = OLTRTrainer(model, device, update_opts, offline_dataset)
+    elif update_opts.trainer == 'batch':
         trainer = BatchTrainer(model, device, update_opts, offline_dataset)
     elif update_opts.trainer == 'finetune':
         trainer = FineTune(model, device, update_opts, offline_dataset)
