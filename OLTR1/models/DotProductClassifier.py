@@ -1,5 +1,5 @@
 import torch.nn as nn
-from utils import *
+from OLTR1.utils import *
 
 class DotProduct_Classifier(nn.Module):
     

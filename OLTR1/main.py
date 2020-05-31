@@ -4,7 +4,7 @@ import pprint
 from data import dataloader
 from run_networks import model
 import warnings
-from utils import source_import
+from OLTR1.utils import source_import
 
 # ================
 # LOAD CONFIGURATIONS

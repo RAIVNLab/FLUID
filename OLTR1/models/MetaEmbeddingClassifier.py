@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from models.CosNormClassifier import CosNorm_Classifier
-from utils import *
+from OLTR1.models.CosNormClassifier import CosNorm_Classifier
+from OLTR1.utils import *
 
 import pdb
 

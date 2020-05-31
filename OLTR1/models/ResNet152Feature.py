@@ -1,5 +1,5 @@
-from models.ResNetFeature import *
-from utils import *
+from OLTR1.models.ResNetFeature import *
+from OLTR1.utils import *
         
 def create_model(use_modulatedatt=False, use_fc=False, dropout=None, stage1_weights=False, dataset=None, caffe=False, test=False):
     
