@@ -242,7 +242,7 @@ class OLTRTrainer(Trainer):
         # self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
         #                             momentum=update_opts.m,
         #                             weight_decay=1e-4)
-        self.running_class_count = torch.zeros(1000).to(self.device)
+        self.running_class_count = torch.zeros((1000, 1)).to(self.device)
         self.sample_counter = 0
         print("--- OLTR trainer")
 
