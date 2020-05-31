@@ -13,9 +13,9 @@ import pdb
 
 class model ():
     
-    def __init__(self, config, data, test=False):
+    def __init__(self, config, data, test=False, gpu=0):
 
-        self.device = torch.device('cuda', 0)#cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda', gpu)#cuda:0' if torch.cuda.is_available() else 'cpu')
         self.config = config
         self.training_opt = self.config['training_opt']
         self.memory = self.config['memory']
