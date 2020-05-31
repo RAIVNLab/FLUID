@@ -351,7 +351,7 @@ class model ():
         # Calculate initial centroids only on training data.
         with torch.set_grad_enabled(False):
             
-            for inputs, labels, _ in tqdm(data):
+            for inputs, labels in tqdm(data):
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 # Calculate Features of each training data
                 self.batch_forward(inputs, feature_ext=True)
