@@ -264,8 +264,8 @@ class OLTRTrainer(Trainer):
         labels = []
         for i in range(self.sample_counter, total_samples):
             data, label = self.offline_dataset.__getitem__(i)
-            datas.append(data)
-            labels.append(label)
+            datas.append(torch.tensor(data))
+            labels.append(torch.tensor(label))
             self.lastbatch_class_count[label] += 1
         weight_new = self.lastbatch_class_count/(self.running_class_count + self.lastbatch_class_count + eps)
         centroids_of_lastbatch = self.model.centroids_cal_litw(torch.stack(datas), torch.stack(labels), self.lastbatch_class_count + eps)
