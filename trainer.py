@@ -249,8 +249,12 @@ class OLTRTrainer(Trainer):
     def update_model(self):
         if self.offline_dataset.counter+1 <= self.update_opts.transition_num:
             self.initialize_memory()
-        print('training')
-        self.train()
+            print('training')
+            self.train()
+        if self.offline_dataset.counter >= self.update_opts.transition_num and (self.offline_dataset.counter+1) % self.update_opts.ft_interval == 0:
+            print('training')
+            self.train()
+
 
     def initialize_memory(self):
         total_samples = self.offline_dataset.counter
