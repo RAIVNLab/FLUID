@@ -259,12 +259,21 @@ class OLTRTrainer(Trainer):
     def initialize_memory(self):
         total_samples = self.offline_dataset.counter
         eps = 1e-8
+        self.lastbatch_class_count = torch.zeros((1000, 1)).to(self.device)
+        datas = []
+        labels = []
         for i in range(self.sample_counter, total_samples):
-            _, label = self.offline_dataset.__getitem__(i)
-            self.running_class_count[label] += 1
-        self.sample_counter = total_samples
+            data, label = self.offline_dataset.__getitem__(i)
+            datas.append(data)
+            labels.append(label)
+            self.lastbatch_class_count[label] += 1
+        weight_new = self.lastbatch_class_count/(self.running_class_count + self.lastbatch_class_count + eps)
+        centroids_of_lastbatch = self.model.centroids_cal_litw(torch.stack(datas), torch.stack(labels), self.lastbatch_class_count + eps)
         self.model.criterions['FeatureLoss'].centroids.data = \
-            self.model.centroids_cal(self.offline_loader, self.running_class_count+eps) #TODO Should implement this in centroids_cal
+            self.model.criterions['FeatureLoss'].centroids.data*(1-weight_new) + \
+            centroids_of_lastbatch*weight_new
+        self.running_class_count += self.current_class_count
+        self.sample_counter = total_samples
 
     def train(self):
         for i in range(self.update_opts.epochs):

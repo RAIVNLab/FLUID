@@ -351,7 +351,7 @@ class model ():
         # Calculate initial centroids only on training data.
         with torch.set_grad_enabled(False):
             
-            for inputs, labels in tqdm(data):
+            for inputs, labels, _ in tqdm(data):
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 # Calculate Features of each training data
                 self.batch_forward(inputs, feature_ext=True)
@@ -359,6 +359,32 @@ class model ():
                 for i in range(len(labels)):
                     label = labels[i]
                     centroids[label] += self.features[i]
+
+        # Average summed features with class count
+        centroids /= class_count
+        print("centroids calculated")
+        return centroids
+
+    def centroids_cal_litw(self, inputs, labels, class_count):
+
+        centroids = torch.zeros(self.training_opt['num_classes'],
+                                self.training_opt['feature_dim']).to(self.device)
+
+        print('Calculating centroids.')
+
+        for model in self.networks.values():
+            model.eval()
+
+        # Calculate initial centroids only on training data.
+        with torch.set_grad_enabled(False):
+
+            inputs, labels = inputs.to(self.device), labels.to(self.device)
+            # Calculate Features of each training data
+            self.batch_forward(inputs, feature_ext=True)
+            # Add all calculated features to center tensor
+            for i in range(len(labels)):
+                label = labels[i]
+                centroids[label] += self.features[i]
 
         # Average summed features with class count
         centroids /= class_count
