@@ -52,7 +52,7 @@ class LT_Dataset(Dataset):
         if self.transform is not None:
             sample = self.transform(sample)
 
-        return sample, label #, path Just for centroids_cal
+        return sample, label, path
 
 # Load datasets
 def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_workers=4, test_open=False, shuffle=True):
