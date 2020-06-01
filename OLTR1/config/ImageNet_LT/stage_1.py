@@ -19,21 +19,21 @@ networks = {}
 feature_param = {'use_modulatedatt': False, 'use_fc': False, 'dropout': None,
                  'stage1_weights': False, 'dataset': training_opt['dataset']}
 feature_optim_param = {'lr': 0.1, 'momentum': 0.9, 'weight_decay': 0.0005}
-networks['feat_model'] = {'def_file': './models/ResNet10Feature.py',
+networks['feat_model'] = {'def_file': 'OLTR1/models/ResNet10Feature.py',
                           'params': feature_param,
                           'optim_params': feature_optim_param,
                           'fix': False}
 classifier_param = {'in_dim': training_opt['feature_dim'], 'num_classes': training_opt['num_classes'],
                     'stage1_weights': False, 'dataset': training_opt['dataset']}
 classifier_optim_param = {'lr': 0.1, 'momentum': 0.9, 'weight_decay': 0.0005}
-networks['classifier'] = {'def_file': './models/DotProductClassifier.py',
+networks['classifier'] = {'def_file': 'OLTR1/models/DotProductClassifier.py',
                           'params': classifier_param,
                           'optim_params': classifier_optim_param}
 config['networks'] = networks
 
 criterions = {}
 perf_loss_param = {}
-criterions['PerformanceLoss'] = {'def_file': './loss/SoftmaxLoss.py', 'loss_params': perf_loss_param,
+criterions['PerformanceLoss'] = {'def_file': 'OLTR1/loss/SoftmaxLoss.py', 'loss_params': perf_loss_param,
                                  'optim_params': None, 'weight': 1.0}
 config['criterions'] = criterions
 
