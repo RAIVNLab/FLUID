@@ -268,7 +268,7 @@ class OLTRTrainer(Trainer):
             labels.append(torch.tensor(label))
             lastbatch_class_count[label] += 1
         weight_new = lastbatch_class_count/(self.running_class_count + lastbatch_class_count + eps)
-        centroids_of_lastbatch = self.model.centroids_cal_litw(torch.stack(datas), torch.stack(labels), self.lastbatch_class_count + eps)
+        centroids_of_lastbatch = self.model.centroids_cal_litw(torch.stack(datas), torch.stack(labels), lastbatch_class_count + eps)
         self.model.criterions['FeatureLoss'].centroids.data = \
             self.model.criterions['FeatureLoss'].centroids.data*(1-weight_new) + \
             centroids_of_lastbatch*weight_new
