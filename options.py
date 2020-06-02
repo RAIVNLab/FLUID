@@ -36,6 +36,7 @@ class Options():
         model.add_argument('--path_to_model', type=str, default=None, help='Allows init with different trained models')
         model.add_argument('--similarity_measure', type=str, default='euclidean')
         model.add_argument('--split_layers', type=int, default=1)
+        model.add_argument('--oltr_config_path', type=str, default='OLTR1/config/ImageNet_LT/stage_2_meta_embedding.py')
 
         # system Options
         self.sys_opts = argparse.ArgumentParser()
