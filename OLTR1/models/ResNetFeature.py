@@ -2,6 +2,7 @@ import math
 import torch.nn as nn
 import torch.nn.functional as F
 from layers.ModulatedAttLayer import ModulatedAttLayer
+import torchvision.models as models
 
 
 def conv3x3(in_planes, out_planes, stride=1):
@@ -148,6 +149,63 @@ class ResNet(nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
+
+        if self.use_modulatedatt:
+            x, feature_maps = self.modulatedatt(x)
+        else:
+            feature_maps = None
+
+        x = self.avgpool(x)
+
+        x = x.view(x.size(0), -1)
+
+        if self.use_fc:
+            x = F.relu(self.fc_add(x))
+
+        if self.use_dropout:
+            x = self.dropout(x)
+
+        return x, feature_maps
+
+
+class PreTrainResnet(nn.Module):
+
+    def __init__(self, size, use_modulatedatt=False, use_fc=False, dropout=None):
+        super(ResNet, self).__init__()
+        if size == 18:
+            self.backbone = models.resnet18(pretrained = True)
+            modules = list(self.backbone.children())[:-2]
+            self.backbone = nn.Sequential(*modules)
+
+        self.avgpool = nn.AvgPool2d(7, stride=1)
+
+        self.use_fc = use_fc
+        self.use_dropout = True if dropout else False
+
+        if self.use_fc:
+            print('Using fc.')
+            self.fc_add = nn.Linear(512 * block.expansion, 512)
+
+        if self.use_dropout:
+            print('Using dropout.')
+            self.dropout = nn.Dropout(p=dropout)
+
+        self.use_modulatedatt = use_modulatedatt
+        if self.use_modulatedatt:
+            print('Using self attention.')
+            self.modulatedatt = ModulatedAttLayer(in_channels=512 * block.expansion)
+
+        # for m in self.modules():
+        #     if isinstance(m, nn.Conv2d):
+        #         n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+        #         m.weight.data.normal_(0, math.sqrt(2. / n))
+        #     elif isinstance(m, nn.BatchNorm2d):
+        #         m.weight.data.fill_(1)
+        #         m.bias.data.zero_()
+
+
+    def forward(self, x, *args):
+        x = self.backbone(x)
 
         if self.use_modulatedatt:
             x, feature_maps = self.modulatedatt(x)

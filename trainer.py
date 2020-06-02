@@ -322,11 +322,3 @@ def create_trainer(model, device, offline_dataset, update_opts, class_map):
     else: 
         sys.exit("Given Trainer not currently specified. Check your --trainer argument.")
     return trainer
-
-
-
-    
-    
-    
-    
-    
