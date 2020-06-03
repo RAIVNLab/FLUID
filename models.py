@@ -100,7 +100,7 @@ class Hybrid(nn.Module):
 
 def create_oltr_model(model_opts, sys_opts, device):
     data_root = {'ImageNet': '/usr/data/imagenet',
-                 'Places': '/home/public/dataset/Places365'} # 'OLTR1/config/ImageNet_LT/stage_2_meta_embedding.py'
+                 'Places': '/home/public/dataset/Places365'}
     config = source_import(model_opts.oltr_config_path).config
     training_opt = config['training_opt']
     # change
