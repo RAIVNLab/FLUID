@@ -225,7 +225,7 @@ class PreTrainResnet(nn.Module):
         return x, feature_maps
 
 
-class PreTrainResnet(nn.Module):
+class PreTrainMocoResnet(nn.Module):
 
     def __init__(self, size, use_modulatedatt=False, use_fc=False, dropout=None):
         super(ResNet, self).__init__()

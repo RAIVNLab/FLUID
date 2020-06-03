@@ -20,7 +20,7 @@ networks = {}
 feature_param = {'use_modulatedatt': True, 'use_fc': True, 'dropout': None,
                  'stage1_weights': True, 'dataset': training_opt['dataset']}
 feature_optim_param = {'lr': 0.01, 'momentum': 0.9, 'weight_decay': 0.0005}
-networks['feat_model'] = {'def_file': 'OLTR1/models/ResNet10Feature.py',
+networks['feat_model'] = {'def_file': 'OLTR1/models/ResNet18Feature.py',
                           'params': feature_param,
                           'optim_params': feature_optim_param,
                           'fix': False}
