@@ -170,7 +170,7 @@ class ResNet(nn.Module):
 
 class PreTrainResnet(nn.Module):
 
-    def __init__(self, size, use_modulatedatt=False, use_fc=False, dropout=None):
+    def __init__(self, block, size, use_modulatedatt=False, use_fc=False, dropout=None):
         super(PreTrainResnet, self).__init__()
         if size == 18:
             self.backbone = models.resnet18(pretrained = True)
@@ -227,7 +227,7 @@ class PreTrainResnet(nn.Module):
 
 class PreTrainMocoResnet(nn.Module):
 
-    def __init__(self, size, use_modulatedatt=False, use_fc=False, dropout=None):
+    def __init__(self, block, size, use_modulatedatt=False, use_fc=False, dropout=None):
         super(PreTrainMocoResnet, self).__init__()
         if size == 18:
             self.backbone = models.resnet18(pretrained=True)
