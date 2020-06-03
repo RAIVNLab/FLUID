@@ -171,7 +171,7 @@ class ResNet(nn.Module):
 class PreTrainResnet(nn.Module):
 
     def __init__(self, size, use_modulatedatt=False, use_fc=False, dropout=None):
-        super(ResNet, self).__init__()
+        super(PreTrainResnet, self).__init__()
         if size == 18:
             self.backbone = models.resnet18(pretrained = True)
             modules = list(self.backbone.children())[:-2]
@@ -228,7 +228,7 @@ class PreTrainResnet(nn.Module):
 class PreTrainMocoResnet(nn.Module):
 
     def __init__(self, size, use_modulatedatt=False, use_fc=False, dropout=None):
-        super(ResNet, self).__init__()
+        super(PreTrainMocoResnet, self).__init__()
         if size == 18:
             self.backbone = models.resnet18(pretrained=True)
             pretrained_model_dict = torch.load('./r18_moco_in.pt')
