@@ -44,9 +44,10 @@ def init_weights(model, weights_path, caffe=False, classifier=False):
                        for k in model.state_dict()}
     else:      
         weights = weights['state_dict_best']['classifier']
+        print(weights)
         weights = {k: weights['module.fc.' + k] if 'module.fc.' + k in weights else model.state_dict()[k] 
                    for k in model.state_dict()}
-    model.load_state_dict(weights)   
+    model.load_state_dict(weights)
     return model
 
 def shot_acc (preds, labels, train_data, many_shot_thr=100, low_shot_thr=20):
