@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from layers.ModulatedAttLayer import ModulatedAttLayer
 import torchvision.models as models
+import torch
 
 
 def conv3x3(in_planes, out_planes, stride=1):
