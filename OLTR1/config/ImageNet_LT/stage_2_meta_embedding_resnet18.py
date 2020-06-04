@@ -25,7 +25,7 @@ networks['feat_model'] = {'def_file': 'OLTR1/models/ResNet18Feature.py',
                           'optim_params': feature_optim_param,
                           'fix': False}
 classifier_param = {'in_dim': training_opt['feature_dim'], 'num_classes': training_opt['num_classes'],
-                    'stage1_weights': True, 'dataset': training_opt['dataset']}
+                    'stage1_weights': False, 'dataset': training_opt['dataset']}
 classifier_optim_param = {'lr': 0.1, 'momentum': 0.9, 'weight_decay': 0.0005}
 networks['classifier'] = {'def_file': 'OLTR1/models/MetaEmbeddingClassifier.py',
                           'params': classifier_param,
