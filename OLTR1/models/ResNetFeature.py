@@ -232,6 +232,7 @@ class PreTrainMocoResnet(nn.Module):
         if size == 18:
             self.backbone = models.resnet18(pretrained=True)
             pretrained_model_dict = torch.load('./r18_moco_in.pt')
+            print(pretrained_model_dict.keys())
             self.backbone.load_state_dict(pretrained_model_dict)
 
             modules = list(self.backbone.children())[:-2]
