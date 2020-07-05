@@ -1,4 +1,4 @@
-# GeneralizedPerception
+## Data for running InTheWild coming soon.
 
 Running the code:
 main.py evaluates a given model, classifier, and update strategy on one of the sequences of data. 
