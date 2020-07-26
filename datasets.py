@@ -61,13 +61,12 @@ class OfflineDatasetRF(Dataset):
         path = 'S' + str(sequence_num) + '/class_map' + str(sequence_num) + '.npy'
         class_map_base = np.load(os.path.join(root, path), allow_pickle = True).item()
         self.class_map = create_imagenet_map(root)
-        #base = {key:val for key, val in self.class_map if val not in pos}
         self.class_map.update(class_map_base)
         self.counter = 0
         self.root = root
 
     def __len__(self):
-        #Trick pytorch to initialize empty dataset
+        #Trick for pytorch to initialize empty dataset
         if self.counter == 0:
             return 1
         else: 
@@ -102,20 +101,12 @@ class CategoriesSampler():
     def __len__(self):
         return self.n_batch
 
-    # def update(self, new_label):
-    #     self.m_ind = []
-    #     for i in range(max(new_label) + 1):
-    #         ind = np.argwhere(new_label == i).reshape(-1)
-    #         ind = torch.from_numpy(ind)
-    #         self.m_ind.append(ind)
-
     def __iter__(self):
         for i_batch in range(self.n_batch):
             batch = []
             lens = np.array([len(x) for x in self.m_ind])
             classes = np.array([x[0] for x in np.argwhere(lens > self.n_per)])
             classes = classes[np.random.randint(len(classes), size = self.n_cls)]
-            #classes = torch.randperm(len(self.m_ind))[:self.n_cls]
             for c in classes:
                 l = self.m_ind[c]
                 pos = torch.randperm(len(l))[:self.n_per]
@@ -126,9 +117,6 @@ class CategoriesSampler():
 class MetaImageNet(Dataset):
 
     def __init__(self, root):
-        # csv_path = osp.join(ROOT_PATH, setname + '.csv')
-        # lines = [x.strip() for x in open(csv_path, 'r').readlines()][1:]
-
         data = []
         label = []
         lb = 0
