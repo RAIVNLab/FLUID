@@ -1,12 +1,19 @@
 # I***N*** TH***E*** WIL***D*** - ***NED***
 
-The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the speciailized techniques developed across a diverse set of ML subfields. 
+The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the speciailized techniques and insights made across the diverse set of ML subfields. 
 
-To learn more about the framework and the unexpected findings it produces check out the  [paper](https://arxiv.org/abs/2007.02519). 
+To learn more about the framework and the unexpected findings it produces check out the  [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/).
 
 
 ## Getting Started
+### Installation
+- Clone this repo:
+```bash
+git clone https://github.com/RAIVNLab/InTheWild.git
+cd InTheWild
+```
 
+Install PyTorch and other dependencies
 
 
 
