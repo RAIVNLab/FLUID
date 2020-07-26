@@ -1,4 +1,4 @@
-## Data and further instructions for running InTheWild coming soon.
+## I<b>N</b> TH<b>E</b> WIL<b>D</b> (NED)
 
 Running the code:
 main.py evaluates a given model, classifier, and update strategy on one of the sequences of data. 
