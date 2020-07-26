@@ -1,4 +1,14 @@
-## I<b>N</b> TH<b>E</b> WIL<b>D</b> (NED)
+# I***N*** TH***E*** WIL***D*** - ***NED***
+
+The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the diverse set of ML techniques developed across subfields which we show is non-trivial. 
+
+To learn more about the framework and the unexpected findings it produces check out the  [paper](https://arxiv.org/abs/2007.02519). 
+
+
+## Getting Started
+
+
+
 
 Running the code:
 main.py evaluates a given model, classifier, and update strategy on one of the sequences of data. 
@@ -9,15 +19,3 @@ python main.py --classifier linear --backbone resnet-18 --trainer fine-tune --se
 NCM with a resnet-50 architecture on sequence 3:
 
 python main.py --classifier NCM --backbone resnet-50 --trainer KNN --sequence_num 2
-
-
-
-
-
-
-
-Data Folder Structure: <br />
-The data and meta data for each sequence should be in the respective folder labeled S(sequence number) <br />
-SequenceN: folder containing all samples from 22k needed for sequence N <br />
-SequenceN.npy: The file containing the paths to each img in the order of the sequence <br />
-<br />
