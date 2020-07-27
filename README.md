@@ -22,20 +22,16 @@ cd InTheWild
     |-- data <br />
        |--1k_res <br />
        |--S1 <br />
-        |--sequence1
-        |--sequence1.npy
-       |--S2
-        |--sequence2
-        |--sequence2.npy
-        **.**
-        **.**
-       |--S5
-        |--sequence5
+        |--sequence1 <br />
+        |--sequence1.npy <br />
+       |--S2 <br />
+        |--sequence2 <br />
+        |--sequence2.npy <br />
+        **.** <br />
+        **.** <br />
+       |--S5 <br />
+        |--sequence5 <br />
         |--sequence5.npy <br />
-The action of every agent <br />
-  into the world <br />
-starts <br />
-  from their physical selves. <br />
 
 
 ### Running The Code 
