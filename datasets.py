@@ -74,7 +74,7 @@ class OfflineDatasetRF(Dataset):
         self.counter = count
     
     def __getitem__(self, i):
-        path = self.sequence[i]
+        path = 'data/' + self.sequence[i]
         img_path = os.path.join(self.root, path)
         label = file_to_class(img_path, self.class_map)
         image = self.transform(Image.open(img_path).convert('RGB'))
