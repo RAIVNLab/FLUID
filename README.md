@@ -19,7 +19,7 @@ cd InTheWild
 - Download data 
     - Download the compressed data file from [google drive](https://drive.google.com/uc?export=download&id=).
     - The data is organized into 6 folders. The folder ***1k_res*** contains the images from the base classes of ImageNet-1k that are not included in standard ImageNet-1k. ***SequenceN*** contains the images and ***sequenceN.npy*** contains the image order for the nth sequence of data. Sequences 1-2 are for validation and sequences 3-5 are for testing.  
-    |-- data
+    |-- data <br>
        |--1k_res
        |--S1
         |--sequence1
