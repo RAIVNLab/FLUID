@@ -32,7 +32,10 @@ cd InTheWild
        |--S5
         |--sequence5
         |--sequence5.npy
-
+The action of every agent <br />
+  into the world <br />
+starts <br />
+  from their physical selves. <br />
 
 
 ### Running The Code 
