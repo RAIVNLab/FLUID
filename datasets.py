@@ -34,7 +34,7 @@ class ContinuousDatasetRF(Dataset):
         return len(self.sequence)
 
     def __getitem__(self,i):
-        path = self.sequence[self.counter]
+        path = 'data/' + self.sequence[self.counter]
         img_path = os.path.join(self.root, path)
         label = file_to_class(img_path, self.class_map)
         seen = label in self.seen_classes
@@ -44,7 +44,6 @@ class ContinuousDatasetRF(Dataset):
         self.counter += 1
         return image, label, seen
 
-    #def imgs_per_class 
     def get_samples_seen(self):
         return self.counter
 
