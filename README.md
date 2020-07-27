@@ -4,6 +4,7 @@ The PyTorch implementation for the NED learning and evaluation framework. The NE
 
 To learn more about the framework and the unexpected findings it produces check out the  [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/).
 
+
 ## Getting Started
 ### Installation
 - Clone this repo:
@@ -19,18 +20,18 @@ cd InTheWild
     - Download the compressed data file from [google drive](https://drive.google.com/uc?export=download&id=).
     - The data is organized into 6 folders. The folder ***1k_res*** contains the images from the base classes of ImageNet-1k that are not included in standard ImageNet-1k. ***SequenceN*** contains the images and ***sequenceN.npy*** contains the image order for the nth sequence of data. Sequences 1-2 are for validation and sequences 3-5 are for testing.  
     |-- data
-    $$~~~~~~~~$$|--1k_res
-    $$~~~~~~~~$$|--S1
-        $$~~~~~~~~~~~~$$|--sequence1
-        $$~~~~~~~~~~~~$$|--sequence1.npy
-    $$~~~~~~~~$$|--S2
-        $$~~~~~~~~~~~~$$|--sequence2
-        $$~~~~~~~~~~~~$$|--sequence2.npy
-    $$~~~~~~~~$$**.**
-    $$~~~~~~~~$$**.**
-    $$~~~~~~~~$$|--S5
-        $$~~~~~~~~~~~~$$|--sequence5
-        $$~~~~~~~~~~~~$$|--sequence5.npy
+       |--1k_res
+       |--S1
+        |--sequence1
+        |--sequence1.npy
+       |--S2
+        |--sequence2
+        |--sequence2.npy
+        **.**
+        **.**
+       |--S5
+        |--sequence5
+        |--sequence5.npy
 
 
 
