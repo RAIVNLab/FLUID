@@ -23,7 +23,6 @@ cd InTheWild
        |--1k_res 
 
        |--S1 
-    <br />
         |--sequence1
         |--sequence1.npy
        |--S2
