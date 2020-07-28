@@ -17,7 +17,7 @@ cd InTheWild
   - For pip users, type the command `pip install -r requirements.txt`.
   - For Conda users, you can create a new Conda environment using `conda env create -f environment.yml`.
 - Download data 
-    - Download the compressed data file from [google drive](https://drive.google.com/uc?export=download&id=), unzip it, and place it in the InTheWild folder.
+    - Download the compressed data file from [google drive](https://drive.google.com/uc?export=download&id=1IL9NidHS2kBW2rzFNnzL1TIA_zzSdRaW), unzip it, and place it in the InTheWild folder.
     - The data is organized into 6 folders. The folder ***1k_res*** contains the images from the base classes of ImageNet-1k that are not included in standard ImageNet-1k. ***SequenceN*** contains the images and ***sequenceN.npy*** contains the image order for the nth sequence of data. Sequences 1-2 are for validation and sequences 3-5 are for testing.  
     |-- data <br />
        |--1k_res <br />
