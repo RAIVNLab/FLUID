@@ -41,10 +41,10 @@ Main.py deploys an ML system which is updated and evaluated under the incoming s
 ##### Example Commands
 Deploy a pretrained ResNet-18 updated with fine-tuning on sequence 2:
 ```bash
-python main.py --classifier linear --backbone resnet-18 --trainer fine-tune --sequence_num 2 --pretrain --root ""
+python main.py --classifier linear --backbone resnet-18 --trainer fine-tune --sequence_num 2 --pretrain
 ```
 Nearest Class Mean with pretrained ResNet-50 on sequence 4:
 ```bash
-python main.py --classifier NCM --backbone resnet-50 --trainer KNN --sequence_num 4 --pretrain --root ""
+python main.py --classifier knn --backbone resnet-50 --trainer knn --sequence_num 4 --pretrain 
 ```
 <br />
