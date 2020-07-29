@@ -39,9 +39,9 @@ cd InTheWild
 Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). To see the various options or add your own while running main.py see options.py. For more thorough documentation on the structure of the code see overview.md. 
 
 ##### Example Commands
-Deploy a pretrained ResNet-18 updated with fine-tuning on sequence 2:
+Deploy a pretrained ResNet-18 updated with fine-tuning on sequence 5:
 ```bash
-python main.py --classifier linear --backbone resnet-18 --trainer fine-tune --sequence_num 2 --pretrain
+python main.py --classifier linear --backbone resnet-18 --trainer finetune --sequence_num 5 --pretrain
 ```
 Nearest Class Mean with pretrained ResNet-50 on sequence 4:
 ```bash
