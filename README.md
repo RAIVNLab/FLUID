@@ -48,3 +48,5 @@ Nearest Class Mean with pretrained ResNet-50 on sequence 4:
 python main.py --classifier knn --backbone resnet-50 --trainer knn --sequence_num 4 --pretrain 
 ```
 <br />
+
+For questions about the code base, data or paper email mcw244 at cs dot washington dot edu
