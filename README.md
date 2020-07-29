@@ -49,4 +49,4 @@ python main.py --classifier knn --backbone resnet-50 --trainer knn --sequence_nu
 ```
 <br />
 
-For questions about the code base, data or paper email mcw244 at cs dot washington dot edu
+For questions about the code base, data or paper email mcw244 at cs.washington.edu
