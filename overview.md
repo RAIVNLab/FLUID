@@ -1,14 +1,14 @@
 # Code Overview
 To help users extend the code to their own methods and models we briefly explain the functionality and relevant options for each module. The various options can be found in options.py.
 
-[datasets.py](../datasets.py) - Handles the dataloading during the streaming phase and offline training phase. Meta-training for ImageNet-1k pretraining is handled here while pretrained PyTorch models are used for supervised Imagenet-1k pretraining.
+[datasets.py](datasets.py) - Handles the dataloading during the streaming phase and offline training phase. Meta-training for ImageNet-1k pretraining is handled here while pretrained PyTorch models are used for supervised Imagenet-1k pretraining.
 * `ContinuousDatasetRF` -  Streams data one at a time from a given sequence.
 * `OfflineDatasetRF` Used for the offline training phase. Tracks which data has been sampled by `ContinuousDatasetRF` and only iterates over previously seen data.
 * `MetaImageNet` - A meta-training dataloader for ImageNet-1k used to train MAML and Prototypical Networks on ImageNet-1k.
 * **Relevant Options**
   * `--sequence_num` - Determines which sequence (1-5) is run. Sequence 1-2 are validation and 3-5 are testing. 
   
-[Models.py](../Models.py) - Contains the models used and the functions for assembling the network architecture, method, and similarity metric if applicable. 
+[Models.py](Models.py) - Contains the models used and the functions for assembling the network architecture, method, and similarity metric if applicable. 
 * `KNN` - Implementation for the Nearest Class Mean method. To be paired with `CentroidTrainer` in Trainer.py
 * `Hybrid` - Implementation for the Prototype Tuning method. To be paired with the `HybridTrainer`.
 * `create_model` - Assembles the various available options for backbone architecture, similarity metric, and learning method. Add your own model to the list of options here to train them in main.py.
