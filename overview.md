@@ -40,6 +40,6 @@ To help users extend the code to their own methods and models we briefly explain
 * **Relevant Options**
     * `--report_ood` - Whether to report the out of distribution metrics.
     
-options.py - The parser for all settings used by the various NED modules. 
+[options.py](../options.py) - The parser for all settings used by the various NED modules. 
 ### Sequence Meta Data 
 The sequence, the number of images for each class in the sequence, and the mapping from class name to sequence index are stored in the S*N* folder for the *N*th sequence
