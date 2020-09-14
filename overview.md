@@ -13,7 +13,7 @@ To help users extend the code to their own methods and models we briefly explain
 * `Hybrid` - Implementation for the Prototype Tuning method. To be paired with the `HybridTrainer`.
 * `create_model` - Assembles the various available options for backbone architecture, similarity metric, and learning method. Add your own model to the list of options here to train them in main.py.
 * **Relevant Options**
-  * `--backbone` - The architecture used to extract features. Resnet-10, Resnet-18, etc.
+  * `--backbone` - The architecture used to extract features. Resnet-10, Resnet-18, etc. See `create_model` for the list of possible models.
   * `--classifier` - The classifier used on the features from the backbone. See `create_model` in models.py for all of the classifiers that can be used. 
   * `--pretrained` - Use the flag `--pretrained` to initialize the model before starting the streaming process. Use `--path_to_model` to specify the path to the pretrained weights. If `--path_to_model` is not given then supervised pretrained models from PyTorch will be loaded. 
   * `--similarity_measure` - The similarity metric used for Nearest Class Mean, Prototypical Networks, and Prototype Tuning. 
