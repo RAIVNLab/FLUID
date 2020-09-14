@@ -18,7 +18,7 @@ To help users extend the code to their own methods and models we briefly explain
   * `--pretrained` - Use the flag `--pretrained` to initialize the model before starting the streaming process. Use `--path_to_model` to specify the path to the pretrained weights. If `--path_to_model` is not given then supervised pretrained models from PyTorch will be loaded. 
   * `--similarity_measure` - The similarity metric used for Nearest Class Mean, Prototypical Networks, and Prototype Tuning. 
 
-[Trainer.py](../Trainer.py) - Handles the training routines for offline and online training of models from models.py. 
+[Trainer.py](Trainer.py) - Handles the training routines for offline and online training of models from models.py. 
 *   `Centroid Trainer` - Calculates the mean feature vector for each class on the fly order to perform NCM. It can be paired with the `KNN` model and the similarity measure of your choosing. 
 *  `HybridTrainer` - Calculates the mean feature vector for NCM, then performs fine-tuning every `--ft_interval` number of samples starting after the first `--transition_num` number of samples. 
 * `BatchTrainer` - Trains all layers of a given model on all previously seen streaming data in an offline fashion. Training is performed every `--interval` number of samples seen for `--epochs` number of epochs. Used for standard training in the original paper. 
@@ -35,11 +35,11 @@ To help users extend the code to their own methods and models we briefly explain
   * `--transition_num` - The number of samples encountered before switching to finetuning for prototype tuning. 
   * `--ft_interval` - The frequency for training the model for prototype tuning which is used by HybridTrainer. The model is trained every `--ft_interval` number of samples.
 
-[Metrics.py](../Metrics.py) - The modules used to calculate and track the metrics reported for the NED evaluation. 
+[Metrics.py](Metrics.py) - The modules used to calculate and track the metrics reported for the NED evaluation. 
 * `OnlineMetricTracker` - Tracks the accuracy, the accuracy for each of the 1000 classes, the logits for the out of distribution samples (used to calculate AUROC and F1 score). 
 * **Relevant Options**
     * `--report_ood` - Whether to report the out of distribution metrics.
     
-[options.py](../options.py) - The parser for all settings used by the various NED modules. 
+[options.py](options.py) - The parser for all settings used by the various NED modules. 
 ### Sequence Meta Data 
 The sequence, the number of images for each class in the sequence, and the mapping from class name to sequence index are stored in the S*N* folder for the *N*th sequence
