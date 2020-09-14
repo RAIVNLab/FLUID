@@ -36,7 +36,7 @@ cd InTheWild
 
 ### Running The Code 
 ##### Code Structure
-Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). To see the various options or add your own while running main.py see options.py. For more thorough documentation on the structure of the code see overview.md. 
+Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). To see the various options or add your own while running main.py see options.py. For more thorough documentation on the structure of the code see [overview.md](../overview.md). 
 
 ##### Example Commands
 Deploy a pretrained ResNet-18 updated with fine-tuning on sequence 5:
