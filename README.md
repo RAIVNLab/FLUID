@@ -1,8 +1,8 @@
 # I***N*** TH***E*** WIL***D*** - ***NED***
 
-The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the speciailized techniques and insights made across the diverse set of ML subfields. 
+The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the specialized techniques and insights made across the diverse set of ML subfields. 
 
-To learn more about the framework and the unexpected findings it produces check out the  [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/).
+To learn more about the framework and the revealing insights on generalization and current methods [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/). For documentation on the structure of the code see [overview.md](../overview.md). 
 
 
 ## Getting Started
@@ -36,7 +36,7 @@ cd InTheWild
 
 ### Running The Code 
 ##### Code Structure
-Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). To see the various options or add your own while running main.py see options.py. For more thorough documentation on the structure of the code see [overview.md](../overview.md). 
+Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). To see the various options or add your own while running main.py see options.py. 
 
 ##### Example Commands
 Deploy a pretrained ResNet-18 updated with fine-tuning on sequence 5:
