@@ -2,7 +2,7 @@
 
 The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the specialized techniques and insights made across the diverse set of ML subfields. 
 
-To learn more about the framework and the revealing insights on generalization and current methods [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/). For more documentation of the code see [overview.md](../overview.md). 
+To learn more about the framework and the revealing insights on generalization and current methods [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/). For more documentation of the code see [overview.md](overview.md). 
 
 
 ## Getting Started
@@ -36,7 +36,7 @@ cd InTheWild
 
 ### Running The Code 
 ##### Code Structure
-Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). For more documentation of the code see [overview.md](../overview.md).
+Main.py deploys an ML system which is updated and evaluated under the incoming stream of data. The ML system consists of a model (in model.py) and an update strategies (in trainer.py). For more documentation of the code see [overview.md](overview.md).
 
 ##### Example Commands
 Deploy a pretrained ResNet-18 updated with fine-tuning on sequence 5:
