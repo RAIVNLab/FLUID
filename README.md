@@ -1,8 +1,8 @@
-# I***N*** TH***E*** WIL***D*** - ***NED***
+# FLUID
 
-The PyTorch implementation for the NED learning and evaluation framework. The NED framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. NED is designed to enable research towards general ML systems that incorporate the specialized techniques and insights made across the diverse set of ML subfields. 
+The PyTorch implementation for the FLUID learning and evaluation framework. The FLUID framework aims to more closely simulate real-world learning conditions while naturally conglomerating the objectives of previous learning frameworks such as few-shot, continual, and self-supervised learning. FLUID is designed to enable research towards general ML systems that incorporate the specialized techniques and insights made across the diverse set of ML subfields. 
 
-To learn more about the framework and the revealing insights on generalization and current methods [paper](https://arxiv.org/abs/2007.02519). To submit results to the NED Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/). For more documentation of the code see [overview.md](overview.md). 
+To learn more about the framework and the revealing insights on generalization and current methods [paper](https://arxiv.org/abs/2007.02519). To submit results to the FLUID Leaderboard visit the [website](https://raivn.cs.washington.edu/projects/InTheWild/). For more documentation of the code see [overview.md](overview.md). 
 
 
 ## Getting Started
