@@ -10,7 +10,7 @@ To learn more about the framework and the revealing insights on generalization a
 - Clone this repo:
 ```bash
 git clone git@github.com:RAIVNLab/FLUID.git
-cd InTheWild
+cd git@github.com:RAIVNLab/FLUID.git
 ```
 
 - Install [PyTorch](http://pytorch.org) and other dependencies
