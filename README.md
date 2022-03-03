@@ -9,7 +9,7 @@ To learn more about the framework and the revealing insights on generalization a
 ### Installation
 - Clone this repo:
 ```bash
-git clone https://github.com/RAIVNLab/InTheWild.git
+git clone git@github.com:RAIVNLab/FLUID.git
 cd InTheWild
 ```
 
