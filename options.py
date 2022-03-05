@@ -11,7 +11,7 @@ class Options():
         offline.add_argument('--m', type=float, default=0.1)
         offline.add_argument('--num_layers', type=int, default=1,
                              help='Number of layers to fine-tune')
-        offline.add_argument('--epochs', type=int, default=2)
+        offline.add_argument('--epochs', type=int, default=4)
         offline.add_argument('--offline_batch_size', type=int, default=256)
         offline.add_argument('--batch_factor', type=int, default=2)
         offline.add_argument('--trainer', type=str, default='batch')
