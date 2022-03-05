@@ -180,6 +180,48 @@ class BatchTrainer(Trainer):
                     self.model.zero_grad()
         self.model = self.model.eval()
 
+class Der(Trainer):
+    # I assume batch factor and epochs is 1 here
+    def __init__(self, model, device, update_opts, offline_dataset):
+        super().__init__(model, device, update_opts, offline_dataset)
+        self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
+                                    momentum=update_opts.m,
+                                    weight_decay=1e-4)
+        self.buffer = Buffer(self.args.buffer_size, self.device)
+
+    def update_model(self):
+        self.model.train()
+        for i in range(self.update_opts.epochs):
+            for j, (data, label) in enumerate(self.offline_loader):
+                data = data.to(self.device)
+                label = label.to(self.device)
+                self.observe(data, label)
+                # pred = self.model(data)
+                # loss = F.cross_entropy(pred, label) / self.update_opts.batch_factor
+                # loss = self.observe(data, label)
+                # loss.backward()
+                # self.optimizer.step()
+                # self.model.zero_grad()
+
+        self.model = self.model.eval()
+
+    def observe(self, inputs, labels):
+        self.optimizer.zero_grad()
+
+        outputs = self.model(inputs)
+        loss = F.cross_entropy(outputs, labels)
+
+        if not self.buffer.is_empty():
+            buf_inputs, buf_logits = self.buffer.get_data(
+                self.update_opts.minibatch_size, transform=None)
+            buf_outputs = self.model(buf_inputs)
+            loss += self.update_opts.alpha_der * F.mse_loss(buf_outputs, buf_logits)
+
+        loss.backward()
+        self.optimizer.step()
+        self.buffer.add_data(examples=inputs, logits=outputs.data)
+        self.model.zero_grad()
+
 class FineTune(Trainer):
     def __init__(self, model, device, update_opts, offline_dataset):
         super().__init__(model, device, update_opts, offline_dataset)
