@@ -3,7 +3,6 @@ import datasets
 import numpy as np
 import os
 import torch
-from datasets import ContinuousDataset, OfflineDataset
 import torch.nn as nn
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn

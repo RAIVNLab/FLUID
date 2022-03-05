@@ -8,8 +8,9 @@ import os
 from utils import extract_layers
 from convnet import Convnet
 import sys
-sys.path.insert(0, "pytorchmaml/")
-from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
+from convnet import ProtoMAML
+#sys.path.insert(0, "pytorchmaml/")
+#from pytorchmaml.maml.model import ModelConvOmniglot, ModelConvMiniImagenet
 
 class KNN(nn.Module):
     def __init__(self, model, sim_measure):
@@ -97,6 +98,10 @@ class Hybrid(nn.Module):
 
 
 def create_model(model_opts, sys_opts, device):
+    if model_opts.classifier == 'ProtoMaml':
+        model = ProtoMAML.load_from_checkpoint(os.path.join(sys_opts.root, sys_opts.load_path)).model
+        model.classifier = nn.Linear(368,1000)
+        return model
     if model_opts.classifier == 'maml':
         model = ModelConvMiniImagenet(5, hidden_size=64)
         model.load_state_dict(torch.load(os.path.join(sys_opts.root, sys_opts.load_path)))

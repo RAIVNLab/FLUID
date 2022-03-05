@@ -26,7 +26,8 @@ class OnlineMetricTracker:
             
     def write_metrics(self):
         print(self.ood_correct, " ", self.total_ood)
-        np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.total_ood)
+        if self.report_ood:
+            np.save(os.path.join(self.write_path, 'ood_acc'), self.ood_correct/self.total_ood)
         np.save(os.path.join(self.write_path, 'accuracy_log'), self.accuracy_log)
         np.save(os.path.join(self.write_path, 'ood_softmax_threshold_log'), self.ood_softmax_threshold_log)
         np.save(os.path.join(self.write_path, 'ind_softmax_threshold_log'), self.ind_softmax_threshold_log)

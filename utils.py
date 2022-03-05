@@ -106,6 +106,27 @@ def create_train_transform2():
     ])
     return train_tf
 
+def create_train_transform_PM():
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+    train_tf = transforms.Compose([
+        transforms.RandomResizedCrop(32),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        normalize,
+    ])
+    return train_tf
+
+def create_test_transform_PM():
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+    test_tf = transforms.Compose([
+        transforms.CenterCrop(32),
+        transforms.ToTensor(),
+        normalize,
+    ])
+    return test_tf
+
 def log_settings(args, experiment_name, result_path):
     write_path = os.path.join(result_path, experiment_name)
     f = open(os.path.join(write_path, "Settings.txt"), "w")

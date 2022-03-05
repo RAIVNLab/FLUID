@@ -8,7 +8,7 @@ import torch.nn.parallel
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
-from utils import create_train_transform, create_test_transform, log_settings, create_novel_class_map
+from utils import create_train_transform, create_test_transform, log_settings, create_novel_class_map, create_train_transform_PM, create_test_transform_PM
 from models import create_model
 from trainer import create_trainer
 import warnings
@@ -47,8 +47,13 @@ if __name__ == "__main__":
     model.to(device)
     class_map_novel = create_novel_class_map(args.sys_opts.root, args.sys_opts.sequence_num)
 
-    train_tf = create_train_transform()
-    test_tf = create_test_transform()
+    if args.model_opts.classifier == 'ProtoMaml':
+        train_tf = create_train_transform_PM()
+        test_tf = create_test_transform_PM()
+    else:
+        train_tf = create_train_transform()
+        test_tf = create_test_transform()
+
     online_dataset = ContinuousDatasetRF(args.sys_opts.root, test_tf, args.sys_opts.sequence_num)
     offline_dataset = OfflineDatasetRF(args.sys_opts.root, train_tf, args.sys_opts.sequence_num)                          
     trainer = create_trainer(model, device, offline_dataset, args.update_opts, class_map_novel)
