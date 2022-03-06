@@ -266,7 +266,7 @@ class ErACE(Trainer):
         mask = torch.zeros_like(logits)
         mask[:, present] = 1
 
-        self.opt.zero_grad()
+        self.optimizer.zero_grad()
         if self.seen_so_far.max() < (self.num_classes - 1):
             mask[:, self.seen_so_far.max():] = 1
 
@@ -285,12 +285,13 @@ class ErACE(Trainer):
         loss += loss_re
 
         loss.backward()
-        self.opt.step()
+        self.optimizer.step()
 
         self.buffer.add_data(examples=inputs,
                              labels=labels)
+        self.model.zero_grad()
 
-        return loss.item()
+        # return loss.item()
 
 class FineTune(Trainer):
     def __init__(self, model, device, update_opts, offline_dataset):
