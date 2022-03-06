@@ -216,7 +216,7 @@ class Der(Trainer):
             buf_inputs, buf_logits = self.buffer.get_data(
                 self.update_opts.minibatch_size, transform=None)
             buf_outputs = self.model(buf_inputs)
-            loss += self.update_opts.alpha_der * F.mse_loss(buf_outputs, buf_logits)
+            loss += self.update_opts.der_alpha * F.mse_loss(buf_outputs, buf_logits)
 
         loss.backward()
         self.optimizer.step()
