@@ -19,6 +19,7 @@ class Options():
         offline.add_argument('--ft_interval', type=int, default=5000) #Hybrid training option for how often to fine tune
         offline.add_argument('--der_buffer_size', type=int, default=5120)
         offline.add_argument('--der_alpha', type=float, default=0.5) # Use 0.5 if buffer size is big
+        offline.add_argument('--minibatch_size', type=int, default=128)
 
         #  Online Options
         self.online_opts = argparse.ArgumentParser()
