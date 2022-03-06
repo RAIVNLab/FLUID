@@ -228,7 +228,7 @@ class ErACE(Trainer):
     # I assume batch factor and epochs is 1 here
     def __init__(self, model, device, update_opts, offline_dataset):
         super().__init__(model, device, update_opts, offline_dataset)
-        print("We are using DER")
+        print("We are using ErACE")
         self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
                                     momentum=update_opts.m,
                                     weight_decay=1e-4)
@@ -279,8 +279,8 @@ class ErACE(Trainer):
         if self.task > 0:
             # sample from buffer
             buf_inputs, buf_labels = self.buffer.get_data(
-                self.args.minibatch_size, transform=None)
-            loss_re = self.loss(self.net(buf_inputs), buf_labels)
+                self.update_opts.minibatch_size, transform=None)
+            loss_re = self.loss(self.model(buf_inputs), buf_labels)
 
         loss += loss_re
 
@@ -361,6 +361,8 @@ def create_trainer(model, device, offline_dataset, update_opts, class_map):
         trainer = HybridTrainer(model, device, update_opts, offline_dataset, class_map)
     elif update_opts.trainer == 'der':
         trainer = Der(model, device, update_opts, offline_dataset)
+    elif update_opts.trainer == 'er-ace':
+        trainer = ErACE(model, device, update_opts, offline_dataset)
     else: 
         sys.exit("Given Trainer not currently specified. Check your --trainer argument.")
     return trainer
