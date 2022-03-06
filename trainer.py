@@ -18,6 +18,7 @@ import torch.nn.functional as F
 from abc import ABC, abstractmethod
 from utils import extract_layers
 from models import extract_backbone
+from buffer import Buffer
 import sys
 
 class Trainer(ABC):
@@ -186,7 +187,7 @@ class Der(Trainer):
         self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
                                     momentum=update_opts.m,
                                     weight_decay=1e-4)
-        self.buffer = Buffer(self.args.buffer_size, self.device)
+        self.buffer = Buffer(update_opts.der_buffer_size, self.device)
 
     def update_model(self):
         self.model.train()
@@ -288,6 +289,8 @@ def create_trainer(model, device, offline_dataset, update_opts, class_map):
         trainer = NoTrain(model, device, update_opts, offline_dataset)
     elif update_opts.trainer == 'hybrid':
         trainer = HybridTrainer(model, device, update_opts, offline_dataset, class_map)
+    elif update_opts.trainer == 'der':
+        trainer = Der(model, device, update_opts, offline_dataset)
     else: 
         sys.exit("Given Trainer not currently specified. Check your --trainer argument.")
     return trainer
