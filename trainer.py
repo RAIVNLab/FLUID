@@ -223,6 +223,75 @@ class Der(Trainer):
         self.buffer.add_data(examples=inputs, logits=outputs.data)
         self.model.zero_grad()
 
+
+class ErACE(Trainer):
+    # I assume batch factor and epochs is 1 here
+    def __init__(self, model, device, update_opts, offline_dataset):
+        super().__init__(model, device, update_opts, offline_dataset)
+        print("We are using DER")
+        self.optimizer = torch.optim.SGD(model.parameters(), update_opts.lr,
+                                    momentum=update_opts.m,
+                                    weight_decay=1e-4)
+        self.buffer = Buffer(update_opts.der_buffer_size, self.device)
+        self.seen_so_far = torch.tensor([]).long().to(self.device)
+        self.task = 0
+        self.num_classes = 1000
+        self.loss = F.cross_entropy
+
+    def update_model(self):
+        self.model.train()
+        for i in range(self.update_opts.epochs):
+            for j, (data, label) in enumerate(self.offline_loader):
+                data = data.to(self.device)
+                label = label.to(self.device)
+                self.observe(data, label)
+                # pred = self.model(data)
+                # loss = F.cross_entropy(pred, label) / self.update_opts.batch_factor
+                # loss = self.observe(data, label)
+                # loss.backward()
+                # self.optimizer.step()
+                # self.model.zero_grad()
+
+        self.model = self.model.eval()
+        self.end_task()
+
+    def end_task(self):
+        self.task += 1
+
+    def observe(self, inputs, labels):
+        present = labels.unique()
+        self.seen_so_far = torch.cat([self.seen_so_far, present]).unique()
+
+        logits = self.model(inputs)
+        mask = torch.zeros_like(logits)
+        mask[:, present] = 1
+
+        self.opt.zero_grad()
+        if self.seen_so_far.max() < (self.num_classes - 1):
+            mask[:, self.seen_so_far.max():] = 1
+
+        if self.task > 0:
+            logits = logits.masked_fill(mask == 0, torch.finfo(logits.dtype).min)
+
+        loss = self.loss(logits, labels)
+        loss_re = torch.tensor(0.)
+
+        if self.task > 0:
+            # sample from buffer
+            buf_inputs, buf_labels = self.buffer.get_data(
+                self.args.minibatch_size, transform=None)
+            loss_re = self.loss(self.net(buf_inputs), buf_labels)
+
+        loss += loss_re
+
+        loss.backward()
+        self.opt.step()
+
+        self.buffer.add_data(examples=inputs,
+                             labels=labels)
+
+        return loss.item()
+
 class FineTune(Trainer):
     def __init__(self, model, device, update_opts, offline_dataset):
         super().__init__(model, device, update_opts, offline_dataset)
